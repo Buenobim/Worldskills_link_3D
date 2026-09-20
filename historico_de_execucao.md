@@ -36,10 +36,20 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
 
 ---
 
-### [2026-09-20] - Publicação no Firebase Hosting (Deploy Concluído)
-- **Deploy Realizado com Sucesso**:
-  - Executado `firebase deploy --only hosting` para o projeto oficial `visualizador3dwsc`.
-  - Todos os arquivos estáticos, modelos 3D (.ifc), sequências (.json) e WebAssembly (.wasm) foram publicados no Firebase Hosting.
-- **Validação Online**:
-  - Verificado acesso via navegador no endereço mundial `https://visualizador3dwsc.web.app`.
-  - O erro *"Site Not Found"* foi eliminado com sucesso. O modelo 3D agora renderiza na nuvem com iluminação completa e os QR Codes no painel estão 100% operacionais.
+### [2026-09-20] - Integração do Projeto Oficial (Projeto_Atual com os 4 Módulos A, B, C e D)
+- **Integração dos Novos Arquivos**:
+  - Arquivos `Projeto_Atual.ifc` e `Projeto_Atual.json` adicionados e configurados como padrão do sistema.
+  - Extraídos os 4 módulos oficiais com suas respectivas sequências e tempos personalizados:
+    - **Módulo A**: 93 peças sequenciadas (alvenaria e fundação).
+    - **Módulo B**: 192 peças sequenciadas (estruturas e mosaico).
+    - **Módulo C**: 103 peças sequenciadas.
+    - **Módulo D**: 21 peças sequenciadas.
+  - Identificação de peças fixas (`fixos`) mantidas visíveis na base.
+- **Ajuste na Lógica de Módulos Independentes**:
+  - Quando um módulo posterior é acessado (ex: Módulo B), os módulos anteriores (Módulo A) aparecem já pré-montados como alicerce, e o módulo selecionado executa a sua sequência completa sem interferência de módulos futuros.
+- **Atualização do Gerador de Links**:
+  - O `Projeto_Atual` agora é o projeto padrão.
+  - O painel exibe automaticamente os cards com QR Code e botão de cópia direta para a Obra Completa e para os 4 módulos (A, B, C e D).
+- **Publicação na Nuvem e GitHub**:
+  - Executado novo deploy com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`).
+  - Commit e push enviados para o GitHub `https://github.com/Buenobim/Worldskills_link_3D.git`.
