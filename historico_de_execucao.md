@@ -56,9 +56,8 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
 
 ---
 
-### [2026-09-20] - Correção das Cores Originais do IFC
-- **Remoção de Tinta por Módulo**:
-  - Desativada a pintura artificial que usava a cor do módulo (azul no Módulo B, vermelho no Módulo A).
-  - Cada peça agora mantém 100% da sua textura e cor real extraída diretamente do arquivo IFC (além de quaisquer pinturas manuais salvas no JSON).
-  - Enquanto a peça está descendo, recebe apenas um realce suave de brilho, e quando se assenta, fica com o material natural idêntico ao modelo BIM real.
-  - Novo deploy publicado no Firebase Hosting e sincronizado no GitHub.
+### [2026-09-20] - Correção Definitiva de Cores e Início da Animação
+- **Duplo Ajuste Solucionado**:
+  1. No instante inicial (`00:00`), nenhuma peça fica flutuando no ar antes de o usuário clicar no Play. A parede fica limpa e pronta.
+  2. Implementado controle de versão de cache (`?v=2`) para que o navegador (tanto no celular quanto no PC) descarte scripts antigos em cache e exiba as cores 100% originais do IFC (cinza, branco, alvenaria natural).
+  3. Deploy atualizado no Firebase Hosting e sincronizado no GitHub.
