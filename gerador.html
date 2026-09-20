@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<!--
+  ==============================================================================
+  gerador.html — Painel Gerador de Links & QR Codes WorldSkills
+  ==============================================================================
+  PARA QUE SERVE ESTA PÁGINA? (Explicação em termos simples):
+  Esta é a central de controle onde você gera e exporta os links para compartilhar.
+  Ela cria com 1 clique o link para o modelo completo e o link para cada módulo
+  individual (Módulo A, B, C...), com QR Codes para apontar o celular e botões
+  rápidos para copiar ou exportar a lista para o WhatsApp!
+  ==============================================================================
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Links 3D · WorldSkills</title>
+  <link rel="stylesheet" href="css/gerador.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <div class="cabecalho-info">
+        <h1>
+          <span>🔗</span> Gerador de Links 3D WorldSkills
+        </h1>
+        <p>Gere links diretos e QR Codes da obra completa ou de cada módulo individual para ver no celular.</p>
+      </div>
+
+      <a href="index.html" class="btn-voltar">
+        <span>Abrir Visualizador</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </header>
+
+    <!-- Barra de Configurações do Projeto -->
+    <section class="barra-controles">
+      <div class="campo-grupo">
+        <label for="select-projeto">Projeto 3D Selecionado</label>
+        <select id="select-projeto" class="campo-select">
+          <!-- Preenchido via JavaScript -->
+        </select>
+      </div>
+
+      <div class="campo-grupo">
+        <label for="select-dominio">Tipo de Link (Destino)</label>
+        <select id="select-dominio" class="campo-select">
+          <option value="firebase" selected>🌐 Firebase Online (visualizador3dwsc.web.app)</option>
+          <option value="local">💻 Teste Local (Endereço Atual do Navegador)</option>
+          <option value="custom">✏️ Domínio Personalizado...</option>
+        </select>
+        <input type="text" id="input-dominio-custom" class="campo-input" placeholder="https://seu-dominio.com" style="display:none; margin-top:6px;">
+      </div>
+
+      <div class="botoes-globais">
+        <button id="btn-exportar-todos" class="btn-destaque">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Exportar Todos os Links</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Grade com os Cards de Links e QR Codes -->
+    <main id="grid-modulos" class="grid-modulos">
+      <!-- Preenchido dinamicamente via js/gerador.js -->
+    </main>
+  </div>
+
+  <!-- Modal de Exportação para WhatsApp / Mensagens -->
+  <div id="modal-exportar" class="modal-overlay">
+    <div class="modal-conteudo">
+      <div class="modal-topo">
+        <h2>📋 Lista Formatada para Envio</h2>
+        <button id="btn-fechar-modal" class="btn-fechar-modal">&times;</button>
+      </div>
+      <p style="font-size:13px; color:var(--texto-secundario);">
+        Copie o texto abaixo e cole diretamente no WhatsApp, e-mail ou documento de instruções:
+      </p>
+      <textarea id="textarea-exportar" class="textarea-exportar" readonly></textarea>
+      <button id="btn-copiar-todos" class="btn-destaque" style="justify-content:center;">
+        Copiar Texto Completo
+      </button>
+    </div>
+  </div>
+
+  <!-- Script do Gerador -->
+  <script type="module" src="js/gerador.js"></script>
+</body>
+</html>

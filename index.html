@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<!--
+  ==============================================================================
+  index.html — Visualizador 3D WSC
+  ==============================================================================
+  PARA QUE SERVE ESTA PÁGINA? (Explicação em termos simples):
+  Esta é a tela principal que a pessoa abre quando clica no link do celular ou PC!
+  Ela exibe o modelo 3D em tela cheia com a sequência de montagem 4D.
+  Possui controles limpos e modernos, câmera 100% livre e foco total no modelo.
+  ==============================================================================
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#090d16">
+  <title>Visualizador 3D · WorldSkills 4D</title>
+  <link rel="stylesheet" href="css/visualizador.css">
+
+  <!-- Mapeamento de bibliotecas para carregar o Three.js rapidamente direto da CDN -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Tela de Carregamento inicial -->
+  <div id="tela-carregamento" class="tela-carregamento">
+    <div class="spinner-3d"></div>
+    <div id="carregamento-status" class="carregamento-status">Carregando modelo 3D...</div>
+    <div class="barra-progresso-container">
+      <div id="barra-progresso" class="barra-progresso-preenchimento"></div>
+    </div>
+  </div>
+
+  <!-- Dica de gestos de toque no celular (some após alguns segundos) -->
+  <div class="dica-toque">
+    👆 1 dedo: girar &nbsp;|&nbsp; ✌️ 2 dedos: zoom e mover
+  </div>
+
+  <!-- Barra do Topo -->
+  <header class="topo-bar">
+    <div class="marca-projeto">
+      <div class="logo-icone">4D</div>
+      <div class="titulo-info">
+        <span id="nome-projeto" class="titulo-principal">WorldSkills · Visualizador</span>
+        <span id="badge-modulo" class="subtitulo-modulo">
+          <span class="ponto-cor" id="cor-modulo-ponto"></span>
+          <span id="texto-modulo">Obra Completa</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="acoes-topo">
+      <a href="gerador.html" class="btn-icone-topo" title="Abrir Gerador de Links">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+        <span>Gerador de Links</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Contêiner 3D onde o Three.js desenha o modelo -->
+  <main id="canvas-container"></main>
+
+  <!-- Barra Inferior de Controle Flutuante (Player) -->
+  <section class="player-container">
+    <!-- Linha do Tempo e Marcação de Horas -->
+    <div class="linha-tempo-box">
+      <span id="tempo-atual" class="tempo-label">00:00</span>
+      <input type="range" id="slider-tempo" class="slider-tempo" min="0" max="100" value="0" step="0.1">
+      <span id="tempo-total" class="tempo-label">00:00</span>
+    </div>
+
+    <!-- Linha de Botões de Controle -->
+    <div class="controles-box">
+      <div class="grupo-esquerda">
+        <!-- Botão Play / Pausa -->
+        <button id="btn-play" class="btn-play" aria-label="Reproduzir montagem">
+          <!-- Ícone Play -->
+          <svg id="icone-play" viewBox="0 0 24 24">
+            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+          </svg>
+          <!-- Ícone Pausa (oculto inicialmente) -->
+          <svg id="icone-pausa" viewBox="0 0 24 24" style="display:none;">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
+
+        <!-- Seletor de Módulos (A, B, C... ou Todos) -->
+        <select id="seletor-modulo" class="seletor-modulo" title="Filtrar por Módulo">
+          <option value="">Todos os Módulos</option>
+        </select>
+      </div>
+
+      <div class="grupo-direita">
+        <!-- Contador de Peças -->
+        <span id="contador-pecas" class="contador-pecas">0 peças</span>
+
+        <!-- Botão de Velocidade (1x, 1.5x, 2x) -->
+        <button id="btn-velocidade" class="btn-velocidade" title="Alterar velocidade">1x</button>
+
+        <!-- Botão de Centralizar Modelo na Tela -->
+        <button id="btn-enquadrar" class="btn-auxiliar" title="Centralizar Modelo">
+          <svg viewBox="0 0 24 24">
+            <path d="M15 3h6v6M9 21H3v-6M21 9v6M3 9v6"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Script principal de inicialização da página -->
+  <script type="module">
+    import { iniciarCena, carregarProjeto, alternarPlay, atualizarInstanteAnimacao, definirVelocidade } from "./js/visualizador.js";
+    import { iniciarFirebase } from "./js/firebase-config.js";
+
+    // Conecta com o Firebase
+    iniciarFirebase();
+
+    // Elementos da Interface
+    const container3D = document.getElementById("canvas-container");
+    const telaCarregamento = document.getElementById("tela-carregamento");
+    const carregamentoStatus = document.getElementById("carregamento-status");
+    const barraProgresso = document.getElementById("barra-progresso");
+    const btnPlay = document.getElementById("btn-play");
+    const iconePlay = document.getElementById("icone-play");
+    const iconePausa = document.getElementById("icone-pausa");
+    const sliderTempo = document.getElementById("slider-tempo");
+    const spanTempoAtual = document.getElementById("tempo-atual");
+    const spanTempoTotal = document.getElementById("tempo-total");
+    const btnVelocidade = document.getElementById("btn-velocidade");
+    const btnEnquadrar = document.getElementById("btn-enquadrar");
+    const seletorModulo = document.getElementById("seletor-modulo");
+    const textoModulo = document.getElementById("texto-modulo");
+    const corModuloPonto = document.getElementById("cor-modulo-ponto");
+    const contadorPecas = document.getElementById("contador-pecas");
+    const nomeProjetoEl = document.getElementById("nome-projeto");
+
+    // 1. Lê os parâmetros da URL (ex: ?projeto=video-do-projeto&modulo=A)
+    const urlParams = new URLSearchParams(window.location.search);
+    const projetoId = urlParams.get("projeto") || "video-do-projeto";
+    const moduloParam = urlParams.get("modulo") || null;
+
+    nomeProjetoEl.innerText = projetoId.replace(/[-_]/g, " ").toUpperCase();
+
+    // 2. Inicia o motor 3D
+    iniciarCena(container3D);
+
+    // Função simples para formatar segundos em minutos:segundos (ex: 01:25)
+    function formatarSegundos(s) {
+      const min = Math.floor(s / 60);
+      const seg = Math.floor(s % 60);
+      return `${min.toString().padStart(2, "0")}:${seg.toString().padStart(2, "0")}`;
+    }
+
+    // 3. Carrega o projeto IFC e o JSON correspondente
+    const caminhoIfc = `modelos/${projetoId}.ifc`;
+    const caminhoJson = `modelos/${projetoId}.json`;
+
+    async function carregar() {
+      try {
+        const dados = await carregarProjeto(
+          caminhoIfc,
+          caminhoJson,
+          moduloParam,
+          (msg, progresso) => {
+            carregamentoStatus.innerText = msg;
+            barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
+          }
+        );
+
+        // Preenche o seletor de módulos
+        seletorModulo.innerHTML = `<option value="">Todos os Módulos</option>`;
+        if (dados.cronograma && dados.cronograma.modulos) {
+          dados.cronograma.modulos.forEach((m) => {
+            const opt = document.createElement("option");
+            opt.value = m.id;
+            opt.innerText = m.nome || `Módulo ${m.id}`;
+            if (moduloParam && (moduloParam.toUpperCase() === m.id.toUpperCase())) {
+              opt.selected = true;
+            }
+            seletorModulo.appendChild(opt);
+          });
+        }
+
+        // Atualiza os textos do cabeçalho
+        if (moduloParam && dados.cronograma.moduloAtivo) {
+          const modAtivo = dados.cronograma.moduloAtivo;
+          textoModulo.innerText = modAtivo.nome || `Módulo ${modAtivo.id}`;
+          corModuloPonto.style.backgroundColor = modAtivo.cor || "#38bdf8";
+        } else {
+          textoModulo.innerText = "Obra Completa";
+          corModuloPonto.style.backgroundColor = "#38bdf8";
+        }
+
+        // Configura os limites da barra de tempo
+        sliderTempo.max = dados.cronograma.duracaoTotal;
+        spanTempoTotal.innerText = formatarSegundos(dados.cronograma.duracaoTotal);
+        contadorPecas.innerText = `${dados.cronograma.pecas.length} peças`;
+
+        // Esconde a tela de carregamento suavemente
+        setTimeout(() => {
+          telaCarregamento.classList.add("oculto");
+        }, 400);
+
+      } catch (erro) {
+        console.error("Erro ao carregar:", erro);
+        carregamentoStatus.innerText = "Não foi possível carregar o modelo. Verifique os arquivos.";
+      }
+    }
+
+    carregar();
+
+    // 4. Conecta os botões e eventos com a animação
+    btnPlay.addEventListener("click", () => {
+      const tocando = alternarPlay();
+      iconePlay.style.display = tocando ? "none" : "block";
+      iconePausa.style.display = tocando ? "block" : "none";
+    });
+
+    // Quando o tempo anda, atualiza o slider e o texto
+    window.addEventListener("tempo-mudou", (e) => {
+      const { tempo, total } = e.detail;
+      sliderTempo.value = tempo;
+      spanTempoAtual.innerText = formatarSegundos(tempo);
+    });
+
+    // Ao chegar ao fim da sequência
+    window.addEventListener("fim-sequencia", () => {
+      iconePlay.style.display = "block";
+      iconePausa.style.display = "none";
+    });
+
+    // Quando o usuário arrasta o dedo na barra de tempo
+    sliderTempo.addEventListener("input", (e) => {
+      const novoTempo = parseFloat(e.target.value);
+      spanTempoAtual.innerText = formatarSegundos(novoTempo);
+      atualizarInstanteAnimacao(novoTempo);
+    });
+
+    // Botão de Centralizar
+    btnEnquadrar.addEventListener("click", () => {
+      window.dispatchEvent(new CustomEvent("solicitar-enquadrar"));
+    });
+
+    // Troca de Velocidade (1x -> 1.5x -> 2x -> 0.5x -> 1x)
+    const velocidades = [1.0, 1.5, 2.0, 0.5];
+    let idxVel = 0;
+    btnVelocidade.addEventListener("click", () => {
+      idxVel = (idxVel + 1) % velocidades.length;
+      const v = velocidades[idxVel];
+      btnVelocidade.innerText = `${v}x`;
+      definirVelocidade(v);
+    });
+
+    // Troca de Módulo pelo Seletor
+    seletorModulo.addEventListener("change", (e) => {
+      const novoMod = e.target.value;
+      const novaUrl = new URL(window.location.href);
+      if (novoMod) {
+        novaUrl.searchParams.set("modulo", novoMod);
+      } else {
+        novaUrl.searchParams.delete("modulo");
+      }
+      window.location.href = novaUrl.toString();
+    });
+  </script>
+</body>
+</html>

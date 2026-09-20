@@ -1,0 +1,25 @@
+{
+  "name": "visualizador-3d-wsc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Visualizador 3D e Gerador de Links de Sequência de Montagem 4D para WorldSkills",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve . -l 5000",
+    "dev": "npx serve . -l 5000",
+    "deploy": "firebase deploy"
+  },
+  "dependencies": {
+    "firebase": "^10.13.0"
+  },
+  "keywords": [
+    "worldskills",
+    "bim",
+    "ifc",
+    "4d",
+    "visualizador-3d",
+    "threejs"
+  ],
+  "author": "Buenobim",
+  "license": "MIT"
+}

@@ -1,0 +1,158 @@
+{
+  "tipo": "wsc4d-projeto",
+  "nome": "Projeto WorldSkills",
+  "atualizado": "2026-08-16T20:38:55.933Z",
+  "estado": {
+    "numDias": 4,
+    "velocidade": 1,
+    "futuros": "fantasma",
+    "contexto": "normal",
+    "colorir": false,
+    "corAtiva": true,
+    "fixos": [],
+    "pausas": [],
+    "luz": {
+      "azimute": 85,
+      "elevacao": 26,
+      "intensidade": 3,
+      "ambiente": 0.55,
+      "sol": false
+    },
+    "render": {
+      "preset": "alta",
+      "ceu": "estudio",
+      "tonemap": "aces",
+      "exposicao": 1.05,
+      "ao": 1,
+      "bloom": 0.12,
+      "vinheta": 0.22,
+      "sombras": true,
+      "rebote": 0.45,
+      "texturaForca": 0,
+      "texturaEscala": 8,
+      "varCor": 0.07,
+      "varRug": 0.3,
+      "piso": true,
+      "grade": true,
+      "neblina": 0.8,
+      "fov": 55,
+      "corFiel": false,
+      "animQueda": 1,
+      "animFrac": 0.45,
+      "animBrilho": 0.55,
+      "suavizarCam": 0.12,
+      "videoQualidade": "alta",
+      "videoDesfoque": true,
+      "relevo": 0.7
+    },
+    "takes": [],
+    "cameraGuiada": false,
+    "modulos": [
+      {
+        "id": "A",
+        "nome": "Módulo A",
+        "horas": 5,
+        "cor": "#d9534f",
+        "dia": 1,
+        "seq": [
+          "1kkNhPW5XF4BusAPV6zL1w",
+          "1kkNhPW5XF4BusAPV6zL2P",
+          "1kkNhPW5XF4BusAPV6zL2N",
+          "1kkNhPW5XF4BusAPV6zL2K",
+          "1kkNhPW5XF4BusAPV6zL1f",
+          "1kkNhPW5XF4BusAPV6zL3k",
+          "1kkNhPW5XF4BusAPV6zL3l",
+          "1kkNhPW5XF4BusAPV6zL27",
+          "1kkNhPW5XF4BusAPV6zL3i",
+          "1kkNhPW5XF4BusAPV6zL24",
+          "1kkNhPW5XF4BusAPV6zL4J",
+          "1kkNhPW5XF4BusAPV6zL4I",
+          "1kkNhPW5XF4BusAPV6zL1A",
+          "1kkNhPW5XF4BusAPV6zL3j"
+        ],
+        "velocidade": 1,
+        "dir": "cima",
+        "dirs": {},
+        "auto": true
+      },
+      {
+        "id": "B",
+        "nome": "Módulo B",
+        "horas": 6,
+        "cor": "#3f7fd9",
+        "dia": 2,
+        "seq": [],
+        "velocidade": 1,
+        "dir": "cima",
+        "dirs": {},
+        "auto": true
+      },
+      {
+        "id": "C",
+        "nome": "Módulo C",
+        "horas": 6,
+        "cor": "#43a05a",
+        "dia": 3,
+        "seq": [],
+        "velocidade": 1,
+        "dir": "cima",
+        "dirs": {},
+        "auto": true
+      },
+      {
+        "id": "D",
+        "nome": "Módulo D",
+        "horas": 4,
+        "cor": "#e8963c",
+        "dia": 4,
+        "seq": [],
+        "velocidade": 1,
+        "dir": "cima",
+        "dirs": {},
+        "auto": true
+      }
+    ],
+    "cameras": [
+      {
+        "t": 0,
+        "pos": [
+          -2.0528,
+          1.7243,
+          2.1987
+        ],
+        "alvo": [
+          0.0358,
+          0.964,
+          0.0574
+        ]
+      },
+      {
+        "t": 1.32,
+        "pos": [
+          -0.074,
+          1.247,
+          2.3854
+        ],
+        "alvo": [
+          0.0358,
+          0.964,
+          0.0574
+        ]
+      },
+      {
+        "t": 2.393,
+        "pos": [
+          0.4509,
+          1.4592,
+          0.6197
+        ],
+        "alvo": [
+          0.4789,
+          1.3871,
+          0.0269
+        ]
+      }
+    ],
+    "modelo": "Projeto WorldSkills.ifc"
+  }
+}

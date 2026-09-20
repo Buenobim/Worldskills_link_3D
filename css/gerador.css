@@ -1,0 +1,418 @@
+/**
+ * ==============================================================================
+ * css/gerador.css
+ * ==============================================================================
+ * PARA QUE SERVE ESTE ARQUIVO? (Explicação em termos simples):
+ * Este arquivo define a beleza e a organização do painel Gerador de Links:
+ * - Cards modernos para cada módulo (A, B, C, D...).
+ * - Caixas de QR Code elegantes para escanear com o celular.
+ * - Botões de cópia rápida para WhatsApp.
+ * - Layout responsivo que funciona tanto no computador quanto no celular.
+ * ==============================================================================
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-principal: #090d16;
+  --bg-painel: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-card-borda: rgba(255, 255, 255, 0.1);
+  --texto-principal: #f8fafc;
+  --texto-secundario: #94a3b8;
+  --destaque-azul: #38bdf8;
+  --destaque-azul-escuro: #0284c7;
+  --sucesso-verde: #10b981;
+  --raio-card: 16px;
+  --sombra: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-principal);
+  color: var(--texto-principal);
+  min-height: 100vh;
+  padding: 24px 16px 60px 16px;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* Cabeçalho do Gerador */
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--bg-card-borda);
+}
+
+.cabecalho-info h1 {
+  font-size: 26px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f8fafc, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cabecalho-info p {
+  color: var(--texto-secundario);
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.btn-voltar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--bg-card-borda);
+  color: var(--texto-principal);
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-voltar:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Barra de Configuração e Ações Globais */
+.barra-controles {
+  background: var(--bg-painel);
+  border: 1px solid var(--bg-card-borda);
+  border-radius: var(--raio-card);
+  padding: 20px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--sombra);
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo-grupo label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.campo-select, .campo-input {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--texto-principal);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  min-width: 240px;
+}
+
+.campo-select:focus, .campo-input:focus {
+  border-color: var(--destaque-azul);
+}
+
+.botoes-globais {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.btn-destaque {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-destaque:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+}
+
+/* Grade de Cards dos Módulos */
+.grid-modulos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Card Individual de Link de Módulo */
+.card-modulo {
+  background: var(--bg-painel);
+  border: 1px solid var(--bg-card-borda);
+  border-radius: var(--raio-card);
+  padding: 20px;
+  box-shadow: var(--sombra);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.card-modulo:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
+}
+
+.card-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-titulo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-cor-indicador {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.card-titulo {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.card-badge {
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: var(--texto-secundario);
+}
+
+/* Área do QR Code no Card */
+.qrcode-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.qrcode-box canvas {
+  width: 156px;
+  height: 156px;
+}
+
+.dica-qr {
+  font-size: 11px;
+  color: var(--texto-secundario);
+  text-align: center;
+}
+
+/* Input com Botão de Copiar */
+.link-copiar-box {
+  display: flex;
+  gap: 8px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 4px 6px 4px 12px;
+  align-items: center;
+}
+
+.link-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--texto-secundario);
+  font-size: 12px;
+  outline: none;
+  font-family: monospace;
+}
+
+.btn-copiar {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: var(--texto-principal);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-copiar:hover {
+  background: var(--destaque-azul);
+  color: #000000;
+}
+
+.btn-copiar.copiado {
+  background: var(--sucesso-verde) !important;
+  color: #ffffff !important;
+}
+
+/* Ações do Card */
+.card-acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.btn-card-abrir {
+  flex: 1;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--texto-principal);
+  padding: 9px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-card-abrir:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Modal de Exportação de Links */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.modal-overlay.ativo {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-conteudo {
+  background: var(--bg-painel);
+  border: 1px solid var(--bg-card-borda);
+  border-radius: var(--raio-card);
+  padding: 24px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: var(--sombra);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-topo h2 {
+  font-size: 20px;
+}
+
+.btn-fechar-modal {
+  background: none;
+  border: none;
+  color: var(--texto-secundario);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.textarea-exportar {
+  width: 100%;
+  height: 200px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: var(--texto-principal);
+  padding: 12px;
+  font-family: monospace;
+  font-size: 12px;
+  outline: none;
+  resize: vertical;
+}
+
+/* Responsivo para Celular */
+@media (max-width: 640px) {
+  .cabecalho {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .barra-controles {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .botoes-globais {
+    flex-direction: column;
+  }
+  .btn-destaque {
+    width: 100%;
+    justify-content: center;
+  }
+  .campo-select, .campo-input {
+    min-width: 100%;
+  }
+}
