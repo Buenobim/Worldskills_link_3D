@@ -163,36 +163,56 @@
       return `${min.toString().padStart(2, "0")}:${seg.toString().padStart(2, "0")}`;
     }
 
-    // 3. Carrega o projeto IFC e o JSON correspondente
+    // 3. Carrega o projeto IFC e o JSON correspondente (usa o arquivo isolado do módulo se existir)
     const caminhoIfc = `modelos/${projetoId}.ifc`;
-    const caminhoJson = `modelos/${projetoId}.json`;
+    let caminhoJson = `modelos/${projetoId}.json`;
+    if (moduloParam) {
+      caminhoJson = `modelos/${projetoId}_${moduloParam.toUpperCase()}.json`;
+      // Esconde o botão do gerador para o competidor não ter acesso à lista de links
+      const btnTopo = document.querySelector(".acoes-topo");
+      if (btnTopo) btnTopo.style.display = "none";
+      // Esconde o seletor de módulos para o competidor não conseguir trocar de módulo
+      seletorModulo.style.display = "none";
+    }
 
     async function carregar() {
       try {
-        const dados = await carregarProjeto(
-          caminhoIfc,
-          caminhoJson,
-          moduloParam,
-          (msg, progresso) => {
-            carregamentoStatus.innerText = msg;
-            barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
-          }
-        );
-
-        // Preenche o seletor de módulos (Módulo A, B, C, D)
-        seletorModulo.innerHTML = `<option value="">Todos os Módulos (Obra Completa)</option>`;
-        if (dados.cronograma && dados.cronograma.modulos) {
-          dados.cronograma.modulos.forEach((m) => {
-            const rot = m.rotulo || m.id;
-            const opt = document.createElement("option");
-            opt.value = rot;
-            opt.innerText = m.nome || `Módulo ${rot}`;
-            const paramUp = (moduloParam || "").toUpperCase();
-            if (moduloParam && (paramUp === rot.toUpperCase() || paramUp === (m.id || "").toUpperCase() || (m.id || "").toUpperCase().endsWith("-" + paramUp))) {
-              opt.selected = true;
+        let dados;
+        try {
+          dados = await carregarProjeto(
+            caminhoIfc,
+            caminhoJson,
+            moduloParam,
+            (msg, progresso) => {
+              carregamentoStatus.innerText = msg;
+              barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
             }
-            seletorModulo.appendChild(opt);
-          });
+          );
+        } catch (eJsonIsolado) {
+          // Fallback para o arquivo geral caso o isolado não exista
+          dados = await carregarProjeto(
+            caminhoIfc,
+            `modelos/${projetoId}.json`,
+            moduloParam,
+            (msg, progresso) => {
+              carregamentoStatus.innerText = msg;
+              barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
+            }
+          );
+        }
+
+        // Se for visualização da obra completa (sem módulo restrito), preenche o seletor
+        if (!moduloParam) {
+          seletorModulo.innerHTML = `<option value="">Todos os Módulos (Obra Completa)</option>`;
+          if (dados.cronograma && dados.cronograma.modulos) {
+            dados.cronograma.modulos.forEach((m) => {
+              const rot = m.rotulo || m.id;
+              const opt = document.createElement("option");
+              opt.value = rot;
+              opt.innerText = m.nome || `Módulo ${rot}`;
+              seletorModulo.appendChild(opt);
+            });
+          }
         }
 
         // Atualiza os textos do cabeçalho

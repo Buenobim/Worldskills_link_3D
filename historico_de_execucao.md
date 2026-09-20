@@ -36,28 +36,19 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
 
 ---
 
-### [2026-09-20] - Integração do Projeto Oficial (Projeto_Atual com os 4 Módulos A, B, C e D)
-- **Integração dos Novos Arquivos**:
-  - Arquivos `Projeto_Atual.ifc` e `Projeto_Atual.json` adicionados e configurados como padrão do sistema.
-  - Extraídos os 4 módulos oficiais com suas respectivas sequências e tempos personalizados:
-    - **Módulo A**: 93 peças sequenciadas (alvenaria e fundação).
-    - **Módulo B**: 192 peças sequenciadas (estruturas e mosaico).
-    - **Módulo C**: 103 peças sequenciadas.
-    - **Módulo D**: 21 peças sequenciadas.
-  - Identificação de peças fixas (`fixos`) mantidas visíveis na base.
-- **Ajuste na Lógica de Módulos Independentes**:
-  - Quando um módulo posterior é acessado (ex: Módulo B), os módulos anteriores (Módulo A) aparecem já pré-montados como alicerce, e o módulo selecionado executa a sua sequência completa sem interferência de módulos futuros.
-- **Atualização do Gerador de Links**:
-  - O `Projeto_Atual` agora é o projeto padrão.
-  - O painel exibe automaticamente os cards com QR Code e botão de cópia direta para a Obra Completa e para os 4 módulos (A, B, C e D).
+### [2026-09-20] - Isolamento Seguro e Simples para WorldSkills (China)
+- **Isolamento Físico de Arquivos**:
+  - Gerados 4 arquivos JSON independentes na pasta `modelos/`:
+    - `Projeto_Atual_A.json`: Contém apenas o Módulo A (93 peças) e base. Zero dados de B, C e D.
+    - `Projeto_Atual_B.json`: Módulo A pré-montado no chão + Módulo B (192 peças). Zero dados de C e D.
+    - `Projeto_Atual_C.json`: Módulos A e B pré-montados no chão + Módulo C (103 peças). Zero dados de D.
+    - `Projeto_Atual_D.json`: Módulos A, B e C pré-montados no chão + Módulo D (21 peças).
+- **Blindagem da Interface do Competidor**:
+  - Quando um link de módulo é aberto, o seletor de módulos e o botão do gerador de links são totalmente ocultados.
+  - Competidores e experts não têm como trocar de módulo nem acessar links futuros.
+- **Painel do Líder Organizado**:
+  - Os cards foram organizados em **Link 1 — Módulo A**, **Link 2 — Módulo B**, **Link 3 — Módulo C**, **Link 4 — Módulo D** e **Obra Completa**.
+  - QR Codes nítidos prontos para impressão em papel ou envio no grupo do WhatsApp.
 - **Publicação na Nuvem e GitHub**:
-  - Executado novo deploy com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`).
-  - Commit e push enviados para o GitHub `https://github.com/Buenobim/Worldskills_link_3D.git`.
-
----
-
-### [2026-09-20] - Correção Definitiva de Cores e Início da Animação
-- **Duplo Ajuste Solucionado**:
-  1. No instante inicial (`00:00`), nenhuma peça fica flutuando no ar antes de o usuário clicar no Play. A parede fica limpa e pronta.
-  2. Implementado controle de versão de cache (`?v=2`) para que o navegador (tanto no celular quanto no PC) descarte scripts antigos em cache e exiba as cores 100% originais do IFC (cinza, branco, alvenaria natural).
-  3. Deploy atualizado no Firebase Hosting e sincronizado no GitHub.
+  - Deploy atualizado com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`).
+  - Commit e push sincronizados no GitHub `https://github.com/Buenobim/Worldskills_link_3D.git`.

@@ -59,7 +59,7 @@ export function prepararCronograma(dadosJson, filtroModulo = null) {
   const moduloAlvo = encontrarModulo(modulos, filtroModulo);
 
   const pecas = [];
-  const pecasPreMontadas = new Set();
+  const pecasPreMontadas = new Set(dadosJson.pre_montados || []);
   let tempoAcumulado = 0;
 
   // Tempo padrão suave para cada peça no celular (em segundos)

@@ -121,31 +121,26 @@ function atualizarCards() {
   const urlBase = obterUrlBase();
   const projetoId = selectProjeto.value;
 
-  // 1. Card da Obra Completa
-  const urlCompleta = `${urlBase}/index.html?projeto=${encodeURIComponent(projetoId)}`;
-  linksGerados.push({
-    titulo: "Obra Completa (Todos os Módulos)",
-    url: urlCompleta,
-    cor: "#38bdf8"
-  });
-
-  criarCard({
-    titulo: "Obra Completa",
-    subtitulo: "Todos os módulos em sequência",
-    cor: "#38bdf8",
-    url: urlCompleta,
-    detalhe: "Sequência completa"
-  });
-
-  // 2. Cards para cada Módulo encontrado
+  // 1. Cards para cada um dos 4 Módulos (Link 1, 2, 3 e 4)
   const modulos = (dadosProjetoAtual && dadosProjetoAtual.estado && dadosProjetoAtual.estado.modulos)
     || (dadosProjetoAtual && dadosProjetoAtual.modulos)
     || [];
 
+  const subtitulos = {
+    "A": "Alvenaria e base inicial",
+    "B": "Módulo A pronto + montagem do B",
+    "C": "Módulos A e B prontos + montagem do C",
+    "D": "Módulos A, B e C prontos + fechamento D"
+  };
+
+  const numeros = { "A": "1", "B": "2", "C": "3", "D": "4" };
+
   if (modulos.length > 0) {
     modulos.forEach((m) => {
       const rotuloMod = m.rotulo || m.id;
-      const nomeMod = m.nome || `Módulo ${rotuloMod}`;
+      const num = numeros[rotuloMod] || "";
+      const prefixo = num ? `Link ${num} — ` : "";
+      const nomeMod = `${prefixo}Módulo ${rotuloMod}`;
       const corMod = m.cor || "#3b82f6";
       const totalPecas = (m.seq || []).length;
       const urlModulo = `${urlBase}/index.html?projeto=${encodeURIComponent(projetoId)}&modulo=${encodeURIComponent(rotuloMod)}`;
@@ -158,13 +153,29 @@ function atualizarCards() {
 
       criarCard({
         titulo: nomeMod,
-        subtitulo: `Foco exclusivo no Módulo ${rotuloMod}`,
+        subtitulo: subtitulos[rotuloMod] || `Foco no Módulo ${rotuloMod}`,
         cor: corMod,
         url: urlModulo,
-        detalhe: `${totalPecas} peças sequenciadas`
+        detalhe: `${totalPecas} peças`
       });
     });
   }
+
+  // 2. Card da Obra Completa (Visão Geral do Líder)
+  const urlCompleta = `${urlBase}/index.html?projeto=${encodeURIComponent(projetoId)}`;
+  linksGerados.push({
+    titulo: "Obra Completa (Visão Geral)",
+    url: urlCompleta,
+    cor: "#38bdf8"
+  });
+
+  criarCard({
+    titulo: "Obra Completa",
+    subtitulo: "Todos os módulos em sequência (Visão do Líder)",
+    cor: "#38bdf8",
+    url: urlCompleta,
+    detalhe: "409 peças"
+  });
 }
 
 /**
