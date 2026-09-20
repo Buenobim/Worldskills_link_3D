@@ -13,8 +13,8 @@
  */
 
 import * as THREE from "three";
-import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js";
-import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js";
+import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js?v=2";
+import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js?v=2";
 
 // Endereço da biblioteca que lê arquivos IFC no navegador
 const URL_WEBIFC = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.57/";

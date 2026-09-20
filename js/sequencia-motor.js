@@ -158,8 +158,8 @@ export function avaliarEstadoPecas(cronograma, tempoAtual, modoFantasma = true) 
         cor: p.cor,
         pecaInfo: p
       });
-    } else if (tempoAtual >= p.inicio) {
-      // Sendo construída exatamente neste instante!
+    } else if (tempoAtual > p.inicio) {
+      // Sendo construída agora (só entra se o tempo já começou a correr > início)
       const frac = (tempoAtual - p.inicio) / Math.max(p.duracao, 0.001);
       const progressoSuave = amortecerChegada(frac);
       const distanciaRestante = 1 - progressoSuave;
@@ -172,7 +172,7 @@ export function avaliarEstadoPecas(cronograma, tempoAtual, modoFantasma = true) 
         pecaInfo: p
       });
     } else {
-      // Peça futura
+      // Peça futura (no instante 00:00 fica oculta/esperando o Play)
       resultado.set(p.guid, {
         estado: modoFantasma ? "fantasma" : "oculto",
         progressoAnim: 0,
