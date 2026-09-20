@@ -53,3 +53,12 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
 - **Publicação na Nuvem e GitHub**:
   - Executado novo deploy com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`).
   - Commit e push enviados para o GitHub `https://github.com/Buenobim/Worldskills_link_3D.git`.
+
+---
+
+### [2026-09-20] - Correção das Cores Originais do IFC
+- **Remoção de Tinta por Módulo**:
+  - Desativada a pintura artificial que usava a cor do módulo (azul no Módulo B, vermelho no Módulo A).
+  - Cada peça agora mantém 100% da sua textura e cor real extraída diretamente do arquivo IFC (além de quaisquer pinturas manuais salvas no JSON).
+  - Enquanto a peça está descendo, recebe apenas um realce suave de brilho, e quando se assenta, fica com o material natural idêntico ao modelo BIM real.
+  - Novo deploy publicado no Firebase Hosting e sincronizado no GitHub.

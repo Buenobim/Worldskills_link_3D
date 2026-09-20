@@ -211,6 +211,10 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
 
   if (aoProgredir) aoProgredir("Construindo peças 3D...", 0.8);
 
+  // Cores manuais salvas no projeto (se houver)
+  const estadoJson = dadosJson ? (dadosJson.estado || dadosJson) : {};
+  const mapaCoresJson = estadoJson.cores || {};
+
   // Cria os objetos Three.js e mapeia pelos GUIDs
   for (const [eid, listaGeom] of malhasPorExpressID) {
     let guid = "E" + eid;
@@ -225,6 +229,9 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
     const listaMeshes = [];
     let corHexOriginal = "#94a3b8";
 
+    // Verifica se a peça tem pintura manual salva no JSON
+    const corManual = mapaCoresJson[guid];
+
     for (const d of listaGeom) {
       const geo = new THREE.BufferGeometry();
       const inter = new THREE.InterleavedBuffer(d.verts, 6);
@@ -235,10 +242,11 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
       const r = d.cor?.x ?? 0.8;
       const g = d.cor?.y ?? 0.8;
       const b = d.cor?.z ?? 0.8;
-      corHexOriginal = "#" + new THREE.Color(r, g, b).getHexString();
+      const corFinal = corManual ? new THREE.Color(corManual) : new THREE.Color(r, g, b);
+      corHexOriginal = "#" + corFinal.getHexString();
 
       const mat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(r, g, b),
+        color: corFinal,
         roughness: 0.5,
         metalness: 0.1,
         side: THREE.DoubleSide
@@ -326,34 +334,22 @@ export function atualizarInstanteAnimacao(novoTempo) {
       continue;
     }
 
-    // 4. Peça montada na sequência atual
+    // 4. Peça montada na sequência atual: mantém sua cor e material real original do IFC
     if (estadoInfo.estado === "montado") {
       el.grupo.visible = true;
       el.grupo.position.y = el.posicaoYBase;
       for (const m of el.meshes) {
-        if (!m.userData.matMontado || m.userData.matMontadoCor !== estadoInfo.cor) {
-          m.userData.matMontado = new THREE.MeshStandardMaterial({
-            color: new THREE.Color(estadoInfo.cor || el.corOriginal),
-            roughness: 0.45,
-            metalness: 0.1
-          });
-          m.userData.matMontadoCor = estadoInfo.cor;
-        }
-        m.material = m.userData.matMontado;
+        m.material = m.userData.materialOriginal;
       }
     } else if (estadoInfo.estado === "entrando") {
-      // 5. Peça entrando suavemente do alto
+      // 5. Peça descendo suavemente: usa seu material real com um leve brilho de realce
       el.grupo.visible = true;
       el.grupo.position.y = el.posicaoYBase + estadoInfo.deslocamento * ALTURA_ENTRADA;
       for (const m of el.meshes) {
         if (!m.userData.matEntrando) {
-          m.userData.matEntrando = new THREE.MeshStandardMaterial({
-            color: new THREE.Color(estadoInfo.cor || "#ffffff"),
-            roughness: 0.2,
-            metalness: 0.2,
-            emissive: new THREE.Color(estadoInfo.cor || "#ffffff"),
-            emissiveIntensity: 0.28
-          });
+          m.userData.matEntrando = m.userData.materialOriginal.clone();
+          m.userData.matEntrando.emissive = new THREE.Color(0xffffff);
+          m.userData.matEntrando.emissiveIntensity = 0.25;
         }
         m.material = m.userData.matEntrando;
       }
