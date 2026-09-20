@@ -15,7 +15,8 @@ import { gerarQRCodeNoCanvas } from "./qrcode-light.js";
 
 // Lista de projetos disponíveis localmente
 const PROJETOS_DISPONIVEIS = [
-  { id: "video-do-projeto", nome: "Vídeo do Projeto (Principal)" },
+  { id: "Projeto_Atual", nome: "Projeto Atual (Oficial - 4 Módulos)" },
+  { id: "video-do-projeto", nome: "Vídeo do Projeto (Demonstração)" },
   { id: "projeto-worldskills", nome: "Projeto WorldSkills (Demonstração)" }
 ];
 
@@ -137,13 +138,17 @@ function atualizarCards() {
   });
 
   // 2. Cards para cada Módulo encontrado
-  if (dadosProjetoAtual && dadosProjetoAtual.modulos && dadosProjetoAtual.modulos.length > 0) {
-    dadosProjetoAtual.modulos.forEach((m) => {
-      const idMod = m.id;
-      const nomeMod = m.nome || `Módulo ${idMod}`;
+  const modulos = (dadosProjetoAtual && dadosProjetoAtual.estado && dadosProjetoAtual.estado.modulos)
+    || (dadosProjetoAtual && dadosProjetoAtual.modulos)
+    || [];
+
+  if (modulos.length > 0) {
+    modulos.forEach((m) => {
+      const rotuloMod = m.rotulo || m.id;
+      const nomeMod = m.nome || `Módulo ${rotuloMod}`;
       const corMod = m.cor || "#3b82f6";
       const totalPecas = (m.seq || []).length;
-      const urlModulo = `${urlBase}/index.html?projeto=${encodeURIComponent(projetoId)}&modulo=${encodeURIComponent(idMod)}`;
+      const urlModulo = `${urlBase}/index.html?projeto=${encodeURIComponent(projetoId)}&modulo=${encodeURIComponent(rotuloMod)}`;
 
       linksGerados.push({
         titulo: nomeMod,
@@ -153,7 +158,7 @@ function atualizarCards() {
 
       criarCard({
         titulo: nomeMod,
-        subtitulo: `Foco exclusivo no Módulo ${idMod}`,
+        subtitulo: `Foco exclusivo no Módulo ${rotuloMod}`,
         cor: corMod,
         url: urlModulo,
         detalhe: `${totalPecas} peças sequenciadas`

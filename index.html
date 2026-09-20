@@ -146,12 +146,12 @@
     const contadorPecas = document.getElementById("contador-pecas");
     const nomeProjetoEl = document.getElementById("nome-projeto");
 
-    // 1. Lê os parâmetros da URL (ex: ?projeto=video-do-projeto&modulo=A)
+    // 1. Lê os parâmetros da URL (ex: ?projeto=Projeto_Atual&modulo=A)
     const urlParams = new URLSearchParams(window.location.search);
-    const projetoId = urlParams.get("projeto") || "video-do-projeto";
+    const projetoId = urlParams.get("projeto") || "Projeto_Atual";
     const moduloParam = urlParams.get("modulo") || null;
 
-    nomeProjetoEl.innerText = projetoId.replace(/[-_]/g, " ").toUpperCase();
+    nomeProjetoEl.innerText = projetoId === "Projeto_Atual" ? "PROJETO ATUAL WSC" : projetoId.replace(/[-_]/g, " ").toUpperCase();
 
     // 2. Inicia o motor 3D
     iniciarCena(container3D);
@@ -179,14 +179,16 @@
           }
         );
 
-        // Preenche o seletor de módulos
-        seletorModulo.innerHTML = `<option value="">Todos os Módulos</option>`;
+        // Preenche o seletor de módulos (Módulo A, B, C, D)
+        seletorModulo.innerHTML = `<option value="">Todos os Módulos (Obra Completa)</option>`;
         if (dados.cronograma && dados.cronograma.modulos) {
           dados.cronograma.modulos.forEach((m) => {
+            const rot = m.rotulo || m.id;
             const opt = document.createElement("option");
-            opt.value = m.id;
-            opt.innerText = m.nome || `Módulo ${m.id}`;
-            if (moduloParam && (moduloParam.toUpperCase() === m.id.toUpperCase())) {
+            opt.value = rot;
+            opt.innerText = m.nome || `Módulo ${rot}`;
+            const paramUp = (moduloParam || "").toUpperCase();
+            if (moduloParam && (paramUp === rot.toUpperCase() || paramUp === (m.id || "").toUpperCase() || (m.id || "").toUpperCase().endsWith("-" + paramUp))) {
               opt.selected = true;
             }
             seletorModulo.appendChild(opt);
@@ -196,7 +198,7 @@
         // Atualiza os textos do cabeçalho
         if (moduloParam && dados.cronograma.moduloAtivo) {
           const modAtivo = dados.cronograma.moduloAtivo;
-          textoModulo.innerText = modAtivo.nome || `Módulo ${modAtivo.id}`;
+          textoModulo.innerText = modAtivo.nome || `Módulo ${modAtivo.rotulo || modAtivo.id}`;
           corModuloPonto.style.backgroundColor = modAtivo.cor || "#38bdf8";
         } else {
           textoModulo.innerText = "Obra Completa";
