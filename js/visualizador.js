@@ -13,8 +13,8 @@
  */
 
 import * as THREE from "three";
-import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js?v=2";
-import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js?v=2";
+import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js?v=4";
+import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js?v=4";
 
 // Endereço da biblioteca que lê arquivos IFC no navegador
 const URL_WEBIFC = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.57/";
@@ -52,7 +52,8 @@ export function iniciarCena(container) {
   const largura = container.clientWidth || window.innerWidth;
   const altura = container.clientHeight || window.innerHeight;
   camera = new THREE.PerspectiveCamera(45, largura / altura, 0.1, 100);
-  camera.position.set(7, 6, 9);
+  // Vista isométrica frontal oficial (canto com mosaico à esquerda e porta à direita)
+  camera.position.set(-3.2, 2.2, 4.2);
 
   renderizador = new THREE.WebGLRenderer({
     antialias: true,
