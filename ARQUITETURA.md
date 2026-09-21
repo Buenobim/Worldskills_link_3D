@@ -75,15 +75,37 @@ Visualizador/
 - **Three.js (v0.160+)**: Motor de renderização 3D para web com iluminação realista e sombras suaves.
 - **web-ifc**: Leitor de modelos BIM/IFC direto no navegador via WebAssembly (sem precisar de servidor convertendo arquivos).
 - **QRCode.js**: Geração instantânea de QR Codes diretamente na tela do navegador sem depender de serviços externos.
+- **HTML Canvas Offscreen**: Renderização gráfica em alta definição para exportação de cartões em imagem PNG.
+- **CSS @media print**: Layout padronizado para impressão direta em folha A4 e exportação em formato PDF.
 - **Firebase**:
-  - **Firebase Hosting**: Servidor ultrarrápido do Google para hospedar o visualizador mundialmente.
+  - **Firebase Hosting**: Servidor ultrarrápido do Google para hospedar o visualizador mundialmente (`https://visualizador3dwsc.web.app`).
   - **Firebase Storage**: Armazenamento em nuvem caso queira guardar novos modelos na nuvem.
 - **GitHub**: Controle de versão seguro conectado ao repositório do projeto.
 
 ---
 
-## 5. Regras de Código e Manutenção
+## 5. Regras de Isolamento e Segurança Simplificada dos Links
 
-- **Didática em Primeiro Lugar**: Todo arquivo de código deve conter no topo uma explicação em português simples do seu papel no sistema.
+1. **Links Não-Óbvios por Código de Módulo**:
+   - Em vez de usar letras sequenciais no link (`modulo=A`, `modulo=B`), cada módulo possui um código exclusivo e não-óbvio (`?m=mod-8k2p`, `?m=mod-4t7b`, `?m=mod-1w9v`, `?m=mod-6n3r`, `?m=full-model`).
+   - Isso impede que qualquer pessoa consiga descobrir o próximo módulo alterando apenas uma letra na barra de endereço do navegador.
+   - Os arquivos no servidor seguem a mesma nomenclatura (`modelos/modulo_mod-8k2p.json`, etc.).
+   - Se alguém digitar um link inexistente, o sistema exibe uma mensagem simples e amigável: *"Module not found. Please check your link or scan the QR code."*
+   - O líder não precisa ficar liberando módulos manualmente: basta enviar o link ou QR code do módulo desejado na hora certa.
+2. **Sequência Cumulativa Pre-Montada**:
+   - Link 1 (Módulo A): Alvenaria e revestimento base (93 peças).
+   - Link 2 (Módulo B): Módulo A já montado + peças do Módulo B animadas (192 peças).
+   - Link 3 (Módulo C): Módulos A e B já montados + peças do Módulo C animadas (103 peças).
+   - Link 4 (Módulo D): Módulos A, B e C já montados + peças do Módulo D animadas (21 peças).
+3. **Interface 100% em Inglês**:
+   - Toda a interface pública (visualizador, gerador, folhas de impressão A4 e cartões PNG) opera em língua inglesa para conformidade com a competição internacional.
+4. **Proteção do Painel do Líder por PIN**:
+   - O gerador de links (`gerador.html`) possui PIN de acesso (`2026`) para evitar acessos acidentais.
+
+---
+
+## 6. Regras de Código e Manutenção
+
+- **Didática em Primeiro Lugar**: Todo arquivo de código deve conter no topo uma explicação em português simples do seu papel no sistema para o usuário (Bruno).
 - **Funções Explicadas**: Cada função deve ter um comentário leigo logo acima ou abaixo explicando o que ela faz.
 - **Estabilidade Móvel**: Sempre testar para garantir que telas pequenas de smartphones (iPhone e Android) tenham botões fáceis de tocar e excelente taxa de quadros (60 fps).

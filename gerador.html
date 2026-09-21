@@ -1,71 +1,79 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <!--
   ==============================================================================
-  gerador.html — Painel Gerador de Links & QR Codes WorldSkills
+  gerador.html — Gerador de Links e QR Codes WorldSkills (Interface em Inglês)
   ==============================================================================
-  PARA QUE SERVE ESTA PÁGINA? (Explicação em termos simples):
-  Esta é a central de controle onde você gera e exporta os links para compartilhar.
-  Ela cria com 1 clique o link para o modelo completo e o link para cada módulo
-  individual (Módulo A, B, C...), com QR Codes para apontar o celular e botões
-  rápidos para copiar ou exportar a lista para o WhatsApp!
+  PARA QUE SERVE ESTE ARQUIVO? (Explicação em termos simples para o Bruno):
+  Esta é a central de controle do Líder / Avaliador Chefe (Chief Expert).
+  A interface visual fica 100% em inglês (para uso na China), mas este arquivo
+  permite ao líder:
+  1. Ver os 4 cartões individuais dos módulos (Link 1 - Módulo A até Link 4 - Módulo D)
+     e o cartão do projeto completo.
+  2. Cada cartão mostra a foto do módulo pronto, o QR Code de alta resolução, o link direto,
+     o botão de imprimir a folha oficial em A4 / salvar em PDF, e o botão de baixar a imagem PNG.
+  3. Possui tela de bloqueio com senha (PIN: 2026) para que competidores e curiosos não
+     consigam abrir esta página por acidente.
   ==============================================================================
 -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de Links 3D · WorldSkills</title>
-  <link rel="stylesheet" href="css/gerador.css">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>WorldSkills 3D · Link & QR Generator</title>
+  <link rel="stylesheet" href="css/gerador.css?v=20260921_mod_links">
 </head>
 <body>
 
-  <!-- Tela de Bloqueio com PIN de Segurança do Líder -->
+  <!-- Leader PIN Lock Screen -->
   <div id="tela-bloqueio" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:#090d16; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
     <div style="background:#0f172a; border:1px solid rgba(255,255,255,0.12); padding:32px; border-radius:18px; text-align:center; max-width:380px; width:90%; box-shadow:0 20px 40px rgba(0,0,0,0.6);">
       <div style="font-size:38px; margin-bottom:12px;">🔒</div>
-      <h2 style="font-size:19px; margin-bottom:6px; color:#ffffff;">Área Exclusiva do Líder</h2>
-      <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">Digite o PIN de segurança para acessar e liberar os links:</p>
-      <input type="password" id="input-pin" placeholder="PIN de 4 dígitos" maxlength="6" style="background:#1e293b; border:1px solid rgba(255,255,255,0.2); color:#ffffff; padding:12px; border-radius:10px; font-size:20px; text-align:center; width:100%; letter-spacing:6px; margin-bottom:14px; outline:none;">
-      <button id="btn-desbloquear" class="btn-destaque" style="width:100%; justify-content:center; padding:12px;">Desbloquear Painel</button>
-      <div id="pin-erro" style="color:#ef4444; font-size:12px; margin-top:10px; display:none;">PIN incorreto. Acesso restrito ao Líder.</div>
+      <h2 style="font-size:19px; margin-bottom:6px; color:#ffffff;">Leader Security Access</h2>
+      <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">Enter the security PIN to access and release module links:</p>
+      <input type="password" id="input-pin" placeholder="4-digit PIN" maxlength="6" style="background:#1e293b; border:1px solid rgba(255,255,255,0.2); color:#ffffff; padding:12px; border-radius:10px; font-size:20px; text-align:center; width:100%; letter-spacing:6px; margin-bottom:14px; outline:none;">
+      <button id="btn-desbloquear" class="btn-destaque" style="width:100%; justify-content:center; padding:12px;">Unlock Panel</button>
+      <div id="pin-erro" style="color:#ef4444; font-size:12px; margin-top:10px; display:none;">Incorrect PIN. Restricted to Chief Experts.</div>
     </div>
   </div>
 
   <div class="container" id="conteudo-painel" style="display:none;">
-    <!-- Cabeçalho -->
+    <!-- Header -->
     <header class="cabecalho">
       <div class="cabecalho-info">
         <h1>
-          <span>🔗</span> Gerador de Links 3D WorldSkills
+          <span>🔗</span> WorldSkills 3D Generator
         </h1>
-        <p>Gere links diretos e QR Codes da obra completa ou de cada módulo individual para ver no celular.</p>
+        <p>Generate shareable links, high-res QR codes, and printable sheets for each module.</p>
       </div>
 
       <a href="index.html" class="btn-voltar">
-        <span>Abrir Visualizador</span>
+        <span>Open 3D Viewer</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M5 12h14M12 5l7 7-7 7"></path>
         </svg>
       </a>
     </header>
 
-    <!-- Barra de Configurações do Projeto -->
+    <!-- Settings Bar -->
     <section class="barra-controles">
       <div class="campo-grupo">
-        <label for="select-projeto">Projeto 3D Selecionado</label>
+        <label for="select-projeto">Selected 3D Project</label>
         <select id="select-projeto" class="campo-select">
-          <!-- Preenchido via JavaScript -->
+          <!-- Populated via JavaScript -->
         </select>
       </div>
 
       <div class="campo-grupo">
-        <label for="select-dominio">Tipo de Link (Destino)</label>
+        <label for="select-dominio">Link Target Domain</label>
         <select id="select-dominio" class="campo-select">
           <option value="firebase" selected>🌐 Firebase Online (visualizador3dwsc.web.app)</option>
-          <option value="local">💻 Teste Local (Endereço Atual do Navegador)</option>
-          <option value="custom">✏️ Domínio Personalizado...</option>
+          <option value="local">💻 Local Testing (Current Browser Host)</option>
+          <option value="custom">✏️ Custom Domain...</option>
         </select>
-        <input type="text" id="input-dominio-custom" class="campo-input" placeholder="https://seu-dominio.com" style="display:none; margin-top:6px;">
+        <input type="text" id="input-dominio-custom" class="campo-input" placeholder="https://your-domain.com" style="display:none; margin-top:6px;">
       </div>
 
       <div class="botoes-globais">
@@ -75,35 +83,75 @@
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          <span>Exportar Todos os Links</span>
+          <span>Export All Links</span>
         </button>
       </div>
     </section>
 
-    <!-- Grade com os Cards de Links e QR Codes -->
+    <!-- Cards Grid -->
     <main id="grid-modulos" class="grid-modulos">
-      <!-- Preenchido dinamicamente via js/gerador.js -->
+      <!-- Populated dynamically via js/gerador.js -->
     </main>
   </div>
 
-  <!-- Modal de Exportação para WhatsApp / Mensagens -->
+  <!-- Export Modal (Formatted text for WhatsApp / Email) -->
   <div id="modal-exportar" class="modal-overlay">
     <div class="modal-conteudo">
       <div class="modal-topo">
-        <h2>📋 Lista Formatada para Envio</h2>
+        <h2>📋 Formatted Links for Sharing</h2>
         <button id="btn-fechar-modal" class="btn-fechar-modal">&times;</button>
       </div>
       <p style="font-size:13px; color:var(--texto-secundario);">
-        Copie o texto abaixo e cole diretamente no WhatsApp, e-mail ou documento de instruções:
+        Copy the message below to share directly in WhatsApp, Email, or competition briefing notes:
       </p>
       <textarea id="textarea-exportar" class="textarea-exportar" readonly></textarea>
       <button id="btn-copiar-todos" class="btn-destaque" style="justify-content:center;">
-        Copiar Texto Completo
+        Copy All Text
       </button>
     </div>
   </div>
 
-  <!-- Script do Gerador -->
-  <script type="module" src="js/gerador.js"></script>
+  <!-- Official Print Sheet Template (Used by window.print() for A4 / PDF Export) -->
+  <div id="folha-impressao">
+    <div class="print-header">
+      <div>
+        <h1>WORLDSKILLS COMPETITION · 4D SEQUENCE</h1>
+        <span>Wall and Floor Tiling (Skill 12)</span>
+      </div>
+      <div style="font-size:12px; font-weight:700; color:#0f172a; text-align:right;">
+        OFFICIAL RELEASE SHEET
+      </div>
+    </div>
+
+    <div class="print-badge-modulo" id="print-titulo-modulo">MODULE A — BASE & MASONRY</div>
+
+    <div class="print-conteudo-grid">
+      <div class="print-foto-col">
+        <img id="print-foto-img" src="imagens/modulos/modulo_a.png" alt="Finished Module Preview">
+      </div>
+      <div class="print-qr-col">
+        <canvas id="print-qr-canvas" width="200" height="200"></canvas>
+        <span style="font-size:11px; font-weight:700; color:#0f172a; margin-top:6px;">SCAN TO VIEW 3D MODEL</span>
+        <span id="print-url-texto" style="font-size:9px; color:#64748b; margin-top:4px; word-break:break-all;">https://...</span>
+      </div>
+    </div>
+
+    <div class="print-instructions">
+      <h3>INSTRUCTIONS FOR COMPETITORS & EXPERTS</h3>
+      <ol>
+        <li>Open your mobile smartphone camera and point it at the QR code above.</li>
+        <li>Tap the notification banner to open the interactive 3D model in your browser.</li>
+        <li><strong>Free Camera Controls:</strong> Use 1 finger to rotate in 360°, pinch with 2 fingers to zoom and pan freely.</li>
+        <li>Tap the <strong>Play button</strong> to watch the piece-by-piece assembly order and construction timeline.</li>
+      </ol>
+    </div>
+
+    <div class="print-footer">
+      WorldSkills International · Confidential Competition Material · Released by Chief Expert
+    </div>
+  </div>
+
+  <!-- Generator Logic -->
+  <script type="module" src="js/gerador.js?v=20260921_mod_links"></script>
 </body>
 </html>

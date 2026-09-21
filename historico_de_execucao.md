@@ -57,3 +57,48 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
   - O botão de enquadrar da barra inferior agora recentraliza perfeitamente na vista isométrica oficial sempre que o usuário desejar.
 - **Publicação**:
   - Deploy final no Firebase Hosting (`https://visualizador3dwsc.web.app`) e sincronizado no GitHub.
+
+---
+
+### [2026-09-21] - Tradução Integral em Inglês, Fotos dos Módulos Prontos e Exportação em PDF e PNG
+- **Tradução Integral para o Inglês**:
+  - Toda a plataforma pública (`index.html`, `gerador.html`), as folhas de impressão A4 e as imagens geradas foram convertidas 100% para o inglês, atendendo às exigências da competição internacional na China (Wall & Floor Tiling - Skill 12).
+- **Fotos de Alta Resolução dos Módulos Prontos**:
+  - Foram extraídas 4 fotos oficiais da maquete em estado finalizado para cada módulo:
+    - `imagens/modulos/modulo_a.png` (Base e alvenaria)
+    - `imagens/modulos/modulo_b.png` (Mosaico estrutural)
+    - `imagens/modulos/modulo_c.png` (Parede intermediária da porta)
+    - `imagens/modulos/modulo_d.png` (Montagem final completa)
+  - Cada cartão do gerador agora exibe a foto do módulo pronto logo acima do QR Code.
+- **Exportação de Folha Oficial A4 para Impressão e PDF**:
+  - Adicionado botão **"Print / PDF"** em cada cartão.
+  - Ao clicar, o sistema aciona a impressão do navegador com layout padrão A4 contendo: cabeçalho oficial WorldSkills, foto do módulo pronto, QR Code de 200px, link direto e instruções de uso em inglês.
+- **Exportação de Imagem em Alta Resolução (PNG)**:
+  - Adicionado botão **"Save PNG"** em cada cartão.
+  - Gera através de um canvas offscreen uma imagem em alta resolução (1000 x 1380 px) contendo moldura escura profissional, foto da maquete pronta, QR Code ampliado e instruções passo a passo para envio por WeChat/WhatsApp.
+- **Didática e Regras de Ouro**:
+  - Todos os arquivos mantêm comentários explicativos em português leigo no topo e acima de cada função para fácil compreensão do usuário Bruno.
+- **Deploy e Nuvem**:
+  - Publicado com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`) e versionado no GitHub.
+
+---
+
+### [2026-09-21] - Simplificação dos Links com Códigos Não-Óbvios
+- **Links Não-Óbvios Sem Complicação**:
+  - Removido qualquer mecanismo complexo ou mensagens confusas de liberação.
+  - O sistema agora usa parâmetros simples e diretos com códigos não-óbvios:
+    - **Link 1 (Módulo A)**: `https://visualizador3dwsc.web.app/?m=mod-8k2p`
+    - **Link 2 (Módulo B)**: `https://visualizador3dwsc.web.app/?m=mod-4t7b`
+    - **Link 3 (Módulo C)**: `https://visualizador3dwsc.web.app/?m=mod-1w9v`
+    - **Link 4 (Módulo D)**: `https://visualizador3dwsc.web.app/?m=mod-6n3r`
+    - **Obra Completa**: `https://visualizador3dwsc.web.app/?m=full-model`
+- **Prevenção de Troca por 1 Letra**:
+  - Como os códigos são diferentes e não seguem `A`, `B`, `C`, ninguém consegue deduzir o próximo módulo trocando uma única letra.
+  - Se alguém digitar um link inexistente, aparece uma mensagem amigável: *"Module not found. Please check your link or scan the QR code."*
+- **Gerador de Links Atualizado**:
+  - Todos os cartões, links diretos, QR codes, impressão A4 e download de PNG geram diretamente esses links limpos.
+- **Deploy de Produção**:
+  - Publicado com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`).
+
+
+

@@ -55,8 +55,9 @@ export function prepararCronograma(dadosJson, filtroModulo = null) {
   const listaFixos = estado.fixos || [];
   const fixosSet = new Set(listaFixos);
 
-  // Módulo ativo filtrado caso exista (ex: ?modulo=A, ?modulo=B, etc.)
-  const moduloAlvo = encontrarModulo(modulos, filtroModulo);
+  // Módulo ativo filtrado caso exista (pelo parâmetro ou definido no arquivo JSON segregado)
+  const filtroEfetivo = filtroModulo || (dadosJson && dadosJson.moduloAtivo);
+  const moduloAlvo = (filtroEfetivo && filtroEfetivo !== "FULL") ? (encontrarModulo(modulos, filtroEfetivo) || modulos[0]) : null;
 
   const pecas = [];
   const pecasPreMontadas = new Set(dadosJson.pre_montados || []);

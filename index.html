@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <!--
   ==============================================================================
-  index.html — Visualizador 3D WSC (Modo Seguro para Competição)
+  index.html — Visualizador 3D WorldSkills (Modo Seguro de Competição)
   ==============================================================================
-  PARA QUE SERVE ESTA PÁGINA? (Explicação em termos simples):
-  Esta é a tela que os competidores e experts abrem pelo link ou QR Code no celular.
-  REGRAS RÍGIDAS DE SEGURANÇA WORLDSKILLS:
-  1. NÃO possui botão para o Gerador de Links (o competidor não sabe que existe).
-  2. NÃO possui seletor/dropdown de módulos (o competidor não consegue ver outros módulos).
-  3. Carrega APENAS o arquivo JSON exclusivo daquele módulo (sem dados de módulos futuros).
-  4. Câmera 100% livre para rotação e zoom com os dedos.
+  PARA QUE SERVE ESTE ARQUIVO? (Explicação em termos leigos para o Bruno):
+  Esta é a tela do visualizador 3D que os competidores e experts abrem pelo celular.
+  A interface visual fica 100% em inglês (para a competição na China).
+  REGRAS DE SEGURANÇA MÁXIMA:
+  1. NÃO existe menu dropdown (o competidor não consegue trocar nem ver outros módulos).
+  2. NÃO existe botão de gerador de link nesta tela (eles não sabem que o gerador existe).
+  3. O visualizador carrega EXCLUSIVAMENTE o arquivo JSON do módulo liberado pelo líder.
+  4. O toque na tela do celular é 100% livre: 1 dedo gira em 360°, 2 dedos dão zoom e arrastam.
   ==============================================================================
 -->
 <head>
@@ -20,8 +21,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="theme-color" content="#090d16">
-  <title>Visualizador 3D · WorldSkills 4D</title>
-  <link rel="stylesheet" href="css/visualizador.css?v=3">
+  <title>WorldSkills 3D · 4D Construction Sequence</title>
+  <link rel="stylesheet" href="css/visualizador.css?v=20260921_mod_links">
 
   <script type="importmap">
   {
@@ -34,21 +35,21 @@
 </head>
 <body>
 
-  <!-- Tela de Carregamento inicial -->
+  <!-- Loading Screen -->
   <div id="tela-carregamento" class="tela-carregamento">
     <div class="spinner-3d"></div>
-    <div id="carregamento-status" class="carregamento-status">Carregando modelo 3D...</div>
+    <div id="carregamento-status" class="carregamento-status">Loading 3D Model...</div>
     <div class="barra-progresso-container">
       <div id="barra-progresso" class="barra-progresso-preenchimento"></div>
     </div>
   </div>
 
-  <!-- Dica de gestos de toque no celular (some após alguns segundos) -->
+  <!-- Mobile Touch Gesture Tip -->
   <div class="dica-toque">
-    👆 1 dedo: girar &nbsp;|&nbsp; ✌️ 2 dedos: zoom e mover
+    👆 1 finger: rotate &nbsp;|&nbsp; ✌️ 2 fingers: zoom & pan
   </div>
 
-  <!-- Barra do Topo (Totalmente Limpa: Apenas nome e módulo ativo, sem botões externos) -->
+  <!-- Top Header Bar -->
   <header class="topo-bar">
     <div class="marca-projeto">
       <div class="logo-icone">4D</div>
@@ -56,29 +57,29 @@
         <span id="nome-projeto" class="titulo-principal">WorldSkills 3D</span>
         <span id="badge-modulo" class="subtitulo-modulo">
           <span class="ponto-cor" id="cor-modulo-ponto"></span>
-          <span id="texto-modulo">Carregando...</span>
+          <span id="texto-modulo">Loading...</span>
         </span>
       </div>
     </div>
   </header>
 
-  <!-- Contêiner 3D onde o Three.js desenha o modelo -->
+  <!-- Fullscreen 3D Canvas -->
   <main id="canvas-container"></main>
 
-  <!-- Barra Inferior de Controle Flutuante (Player) -->
+  <!-- Floating Player Bar -->
   <section class="player-container">
-    <!-- Linha do Tempo e Marcação de Horas -->
+    <!-- Timeline & Time Display -->
     <div class="linha-tempo-box">
       <span id="tempo-atual" class="tempo-label">00:00</span>
-      <input type="range" id="slider-tempo" class="slider-tempo" min="0" max="100" value="0" step="0.1">
+      <input type="range" id="slider-tempo" class="slider-tempo" min="0" max="100" value="0" step="0.1" aria-label="Timeline scrubber">
       <span id="tempo-total" class="tempo-label">00:00</span>
     </div>
 
-    <!-- Linha de Botões de Controle -->
+    <!-- Player Controls -->
     <div class="controles-box">
       <div class="grupo-esquerda">
-        <!-- Botão Play / Pausa -->
-        <button id="btn-play" class="btn-play" aria-label="Reproduzir montagem">
+        <!-- Play / Pause Button -->
+        <button id="btn-play" class="btn-play" aria-label="Play / Pause assembly sequence" title="Play / Pause">
           <svg id="icone-play" viewBox="0 0 24 24">
             <polygon points="6 3 20 12 6 21 6 3"></polygon>
           </svg>
@@ -88,19 +89,19 @@
           </svg>
         </button>
 
-        <!-- Etiqueta Fixa do Módulo (Apenas texto informativo, NUNCA um menu seletor!) -->
-        <span id="etiqueta-modulo" class="badge-modulo-fixo">Módulo A</span>
+        <!-- Static Module Label (Non-clickable text only) -->
+        <span id="etiqueta-modulo" class="badge-modulo-fixo">Module A</span>
       </div>
 
       <div class="grupo-direita">
-        <!-- Contador de Peças -->
-        <span id="contador-pecas" class="contador-pecas">0 peças</span>
+        <!-- Piece Counter -->
+        <span id="contador-pecas" class="contador-pecas">0 pieces</span>
 
-        <!-- Botão de Velocidade (1x, 1.5x, 2x) -->
-        <button id="btn-velocidade" class="btn-velocidade" title="Alterar velocidade">1x</button>
+        <!-- Playback Speed (1x, 1.5x, 2x, 0.5x) -->
+        <button id="btn-velocidade" class="btn-velocidade" title="Playback Speed">1x</button>
 
-        <!-- Botão de Centralizar Modelo na Tela -->
-        <button id="btn-enquadrar" class="btn-auxiliar" title="Centralizar Modelo">
+        <!-- Recenter Isometric View -->
+        <button id="btn-enquadrar" class="btn-auxiliar" title="Recenter Isometric View">
           <svg viewBox="0 0 24 24">
             <path d="M15 3h6v6M9 21H3v-6M21 9v6M3 9v6"></path>
             <circle cx="12" cy="12" r="3"></circle>
@@ -110,14 +111,13 @@
     </div>
   </section>
 
-  <!-- Script principal de inicialização da página -->
+  <!-- Main Initialization Script -->
   <script type="module">
-    import { iniciarCena, carregarProjeto, alternarPlay, atualizarInstanteAnimacao, definirVelocidade } from "./js/visualizador.js?v=4";
-    import { iniciarFirebase } from "./js/firebase-config.js?v=4";
+    import { iniciarCena, carregarProjeto, alternarPlay, atualizarInstanteAnimacao, definirVelocidade } from "./js/visualizador.js?v=20260921_mod_links";
+    import { iniciarFirebase } from "./js/firebase-config.js?v=20260921_mod_links";
 
     iniciarFirebase();
 
-    // Elementos da Interface
     const container3D = document.getElementById("canvas-container");
     const telaCarregamento = document.getElementById("tela-carregamento");
     const carregamentoStatus = document.getElementById("carregamento-status");
@@ -136,14 +136,15 @@
     const contadorPecas = document.getElementById("contador-pecas");
     const nomeProjetoEl = document.getElementById("nome-projeto");
 
-    // 1. Lê os parâmetros da URL
+    // 1. Leitura do Código do Módulo no Link
+    // Explicação simples: O link agora usa códigos como "?m=mod-8k2p" em vez de "A" ou "B"
+    // Assim ninguém consegue adivinhar o próximo módulo trocando apenas uma letra!
     const urlParams = new URLSearchParams(window.location.search);
-    const projetoId = urlParams.get("projeto") || "Projeto_Atual";
-    const moduloParam = urlParams.get("modulo") ? urlParams.get("modulo").trim().toUpperCase() : "A";
+    const codigoModulo = (urlParams.get("m") || urlParams.get("modulo") || urlParams.get("k") || "mod-8k2p").trim();
 
     nomeProjetoEl.innerText = "WORLDSKILLS 3D";
 
-    // 2. Inicia o motor 3D
+    // 2. Inicializa o motor 3D
     iniciarCena(container3D);
 
     function formatarSegundos(s) {
@@ -152,50 +153,55 @@
       return `${min.toString().padStart(2, "0")}:${seg.toString().padStart(2, "0")}`;
     }
 
-    // 3. SEGURANÇA TOTAL: Carrega EXCLUSIVAMENTE o arquivo isolado do módulo liberado!
-    const caminhoIfc = `modelos/${projetoId}.ifc`;
-    // Se pediu Módulo A, carrega Projeto_Atual_A.json (que contém ZERO dados de B, C e D)
-    const caminhoJson = `modelos/${projetoId}_${moduloParam}.json`;
+    // 3. Caminho do modelo e da sequência correspondente ao código do link
+    const caminhoIfc = "modelos/Projeto_Atual.ifc";
+    const caminhoJson = `modelos/modulo_${codigoModulo}.json`;
 
     async function carregar() {
       try {
         const dados = await carregarProjeto(
           caminhoIfc,
           caminhoJson,
-          moduloParam,
+          null, // O arquivo do módulo já vem com a sequência correta
           (msg, progresso) => {
             carregamentoStatus.innerText = msg;
             barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
           }
         );
 
-        // Atualiza textos fixos informativos
-        const nomeModTexto = `Módulo ${moduloParam}`;
-        textoModulo.innerText = nomeModTexto;
-        etiquetaModulo.innerText = nomeModTexto;
+        const modInfo = (dados.dadosJson && dados.dadosJson.moduloAtivo) ? dados.dadosJson.moduloAtivo : "";
+        const tituloMod = (dados.dadosJson && dados.dadosJson.titulo) 
+          ? dados.dadosJson.titulo 
+          : (modInfo === "FULL" ? "Complete Project" : `Module ${modInfo}`);
+
+        textoModulo.innerText = tituloMod;
+        etiquetaModulo.innerText = modInfo === "FULL" ? "Full Project" : `Module ${modInfo}`;
 
         if (dados.cronograma && dados.cronograma.moduloAtivo) {
           corModuloPonto.style.backgroundColor = dados.cronograma.moduloAtivo.cor || "#38bdf8";
+        } else {
+          corModuloPonto.style.backgroundColor = "#38bdf8";
         }
 
-        // Configura barra de tempo e contador
         sliderTempo.max = dados.cronograma.duracaoTotal;
         spanTempoTotal.innerText = formatarSegundos(dados.cronograma.duracaoTotal);
-        contadorPecas.innerText = `${dados.cronograma.pecas.length} peças`;
+        contadorPecas.innerText = `${dados.cronograma.pecas.length} pieces`;
 
         setTimeout(() => {
           telaCarregamento.classList.add("oculto");
         }, 300);
 
       } catch (erro) {
-        console.error("Erro ao carregar:", erro);
-        carregamentoStatus.innerText = `Módulo ${moduloParam} não disponível ou não liberado pelo Líder.`;
+        console.error("Load error:", erro);
+        carregamentoStatus.innerText = "Module not found. Please check your link or scan the QR code.";
+        barraProgresso.parentElement.style.display = "none";
+        const spinner = document.querySelector(".spinner-3d");
+        if (spinner) spinner.style.display = "none";
       }
     }
 
     carregar();
 
-    // 4. Conecta controles
     btnPlay.addEventListener("click", () => {
       const tocando = alternarPlay();
       iconePlay.style.display = tocando ? "none" : "block";

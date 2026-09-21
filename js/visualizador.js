@@ -160,14 +160,11 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
   if (aoProgredir) aoProgredir("Carregando sequência de montagem...", 0.1);
 
   let dadosJson = null;
-  try {
-    const resJson = await fetch(caminhoJson);
-    if (resJson.ok) {
-      dadosJson = await resJson.json();
-    }
-  } catch (err) {
-    console.warn("Aviso ao carregar JSON da sequência:", err);
+  const resJson = await fetch(caminhoJson);
+  if (!resJson.ok) {
+    throw new Error("Security Alert: Module access key is invalid or has not been released by the Chief Expert.");
   }
+  dadosJson = await resJson.json();
 
   // Prepara o cronograma e os filtros de módulo
   cronogramaAtual = prepararCronograma(dadosJson, filtroModulo);
@@ -282,7 +279,7 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
 
   if (aoProgredir) aoProgredir("Pronto!", 1.0);
 
-  return { cronograma: cronogramaAtual, totalPecas: elementosPorGuid.size };
+  return { cronograma: cronogramaAtual, totalPecas: elementosPorGuid.size, dadosJson };
 }
 
 /**

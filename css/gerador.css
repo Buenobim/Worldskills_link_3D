@@ -1,22 +1,23 @@
 /**
  * ==============================================================================
- * css/gerador.css
+ * css/gerador.css — Estilos Visuais da Central do Líder (WorldSkills)
  * ==============================================================================
- * PARA QUE SERVE ESTE ARQUIVO? (Explicação em termos simples):
- * Este arquivo define a beleza e a organização do painel Gerador de Links:
- * - Cards modernos para cada módulo (A, B, C, D...).
- * - Caixas de QR Code elegantes para escanear com o celular.
- * - Botões de cópia rápida para WhatsApp.
- * - Layout responsivo que funciona tanto no computador quanto no celular.
+ * PARA QUE SERVE ESTE ARQUIVO? (Explicação em termos simples para o Bruno):
+ * Este arquivo cuida do design visual da tela do Líder (gerador.html):
+ * 1. Define as cores modernas em tema escuro (Dark Theme), tipografia nítida e sombras.
+ * 2. Organiza os cartões dos módulos em grade (grid) com as fotos dos módulos prontos.
+ * 3. Formata os QR Codes e os botões "Print / PDF" e "Save PNG".
+ * 4. Contém as regras de impressão (@media print) que garantem que, ao clicar em Print,
+ *    uma folha bonita no padrão A4 oficial de competição seja gerada sem quebras de página.
  * ==============================================================================
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   --bg-principal: #090d16;
   --bg-painel: #0f172a;
-  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-card: rgba(30, 41, 59, 0.75);
   --bg-card-borda: rgba(255, 255, 255, 0.1);
   --texto-principal: #f8fafc;
   --texto-secundario: #94a3b8;
@@ -42,11 +43,11 @@ body {
 }
 
 .container {
-  max-width: 1080px;
+  max-width: 1140px;
   margin: 0 auto;
 }
 
-/* Cabeçalho do Gerador */
+/* Header */
 .cabecalho {
   display: flex;
   justify-content: space-between;
@@ -60,7 +61,7 @@ body {
 
 .cabecalho-info h1 {
   font-size: 26px;
-  font-weight: 700;
+  font-weight: 800;
   background: linear-gradient(135deg, #f8fafc, #94a3b8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -96,7 +97,7 @@ body {
   transform: translateY(-1px);
 }
 
-/* Barra de Configuração e Ações Globais */
+/* Control Bar */
 .barra-controles {
   background: var(--bg-painel);
   border: 1px solid var(--bg-card-borda);
@@ -134,7 +135,7 @@ body {
   font-size: 14px;
   font-family: inherit;
   outline: none;
-  min-width: 240px;
+  min-width: 260px;
 }
 
 .campo-select:focus, .campo-input:focus {
@@ -168,15 +169,15 @@ body {
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
 }
 
-/* Grade de Cards dos Módulos */
+/* Module Grid */
 .grid-modulos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
   margin-top: 20px;
 }
 
-/* Card Individual de Link de Módulo */
+/* Individual Module Card */
 .card-modulo {
   background: var(--bg-painel);
   border: 1px solid var(--bg-card-borda);
@@ -199,7 +200,7 @@ body {
 .card-topo {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .card-titulo-area {
@@ -213,6 +214,7 @@ body {
   height: 14px;
   border-radius: 4px;
   box-shadow: 0 0 8px currentColor;
+  flex-shrink: 0;
 }
 
 .card-titulo {
@@ -221,32 +223,70 @@ body {
 }
 
 .card-badge {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.08);
   padding: 4px 10px;
   border-radius: 999px;
   color: var(--texto-secundario);
+  white-space: nowrap;
 }
 
-/* Área do QR Code no Card */
+/* Module Finished Photo Thumbnail */
+.card-foto-box {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #090d16;
+  position: relative;
+}
+
+.card-foto-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.card-foto-box:hover img {
+  transform: scale(1.04);
+}
+
+.card-foto-tag {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(6px);
+  color: #f8fafc;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* QR Code Box */
 .qrcode-box {
   background: #ffffff;
   border-radius: 12px;
-  padding: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   margin: 0 auto;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
 .qrcode-box canvas {
-  width: 156px;
-  height: 156px;
+  width: 140px;
+  height: 140px;
 }
 
 .dica-qr {
@@ -255,7 +295,7 @@ body {
   text-align: center;
 }
 
-/* Input com Botão de Copiar */
+/* Link input & Copy */
 .link-copiar-box {
   display: flex;
   gap: 8px;
@@ -271,7 +311,7 @@ body {
   background: transparent;
   border: none;
   color: var(--texto-secundario);
-  font-size: 12px;
+  font-size: 11px;
   outline: none;
   font-family: monospace;
 }
@@ -289,6 +329,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 
 .btn-copiar:hover {
@@ -301,14 +342,20 @@ body {
   color: #ffffff !important;
 }
 
-/* Ações do Card */
+/* Card Action Buttons */
 .card-acoes {
   display: flex;
+  flex-direction: column;
   gap: 8px;
   margin-top: auto;
 }
 
-.btn-card-abrir {
+.linha-botoes-card {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-card-acao {
   flex: 1;
   text-align: center;
   background: rgba(255, 255, 255, 0.08);
@@ -317,24 +364,41 @@ body {
   padding: 9px;
   border-radius: 8px;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   transition: all 0.2s;
 }
 
-.btn-card-abrir:hover {
+.btn-card-acao:hover {
   background: rgba(255, 255, 255, 0.16);
   border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
-/* Modal de Exportação de Links */
+.btn-card-abrir {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: var(--destaque-azul);
+}
+
+.btn-card-abrir:hover {
+  background: var(--destaque-azul);
+  color: #000000;
+}
+
+/* Modals */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -343,6 +407,7 @@ body {
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s ease;
+  padding: 16px;
 }
 
 .modal-overlay.ativo {
@@ -355,12 +420,14 @@ body {
   border: 1px solid var(--bg-card-borda);
   border-radius: var(--raio-card);
   padding: 24px;
-  width: 90%;
+  width: 100%;
   max-width: 600px;
   box-shadow: var(--sombra);
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-topo {
@@ -371,19 +438,21 @@ body {
 
 .modal-topo h2 {
   font-size: 20px;
+  font-weight: 700;
 }
 
 .btn-fechar-modal {
   background: none;
   border: none;
   color: var(--texto-secundario);
-  font-size: 24px;
+  font-size: 26px;
   cursor: pointer;
+  line-height: 1;
 }
 
 .textarea-exportar {
   width: 100%;
-  height: 200px;
+  height: 220px;
   background: #1e293b;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -395,24 +464,135 @@ body {
   resize: vertical;
 }
 
-/* Responsivo para Celular */
-@media (max-width: 640px) {
-  .cabecalho {
-    flex-direction: column;
-    align-items: flex-start;
+/* ==============================================================================
+   OFFICIAL PRINT SHEET & PDF LAYOUT (Formatted for A4 Paper)
+   ============================================================================== */
+#folha-impressao {
+  display: none;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: 'Inter', Arial, sans-serif !important;
   }
-  .barra-controles {
-    flex-direction: column;
-    align-items: stretch;
+
+  /* Hide everything except the print sheet */
+  .container, .barra-controles, .cabecalho, #tela-bloqueio, .modal-overlay, header {
+    display: none !important;
   }
-  .botoes-globais {
-    flex-direction: column;
+
+  #folha-impressao {
+    display: block !important;
+    width: 100% !important;
+    max-width: 760px !important;
+    margin: 0 auto !important;
+    padding: 24px 30px !important;
+    box-sizing: border-box !important;
   }
-  .btn-destaque {
-    width: 100%;
-    justify-content: center;
+
+  .print-header {
+    border-bottom: 2px solid #0f172a !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 20px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
   }
-  .campo-select, .campo-input {
-    min-width: 100%;
+
+  .print-header h1 {
+    font-size: 22px !important;
+    color: #0f172a !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  .print-header span {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 600 !important;
+  }
+
+  .print-badge-modulo {
+    display: inline-block !important;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    padding: 6px 16px !important;
+    border-radius: 6px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .print-conteudo-grid {
+    display: flex !important;
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+    align-items: center !important;
+  }
+
+  .print-foto-col {
+    flex: 1.2 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .print-foto-col img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  .print-qr-col {
+    flex: 0.9 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    padding: 16px !important;
+    text-align: center !important;
+  }
+
+  .print-qr-col canvas {
+    width: 180px !important;
+    height: 180px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .print-instructions {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 16px 20px !important;
+  }
+
+  .print-instructions h3 {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 10px !important;
+    text-transform: uppercase !important;
+  }
+
+  .print-instructions ol {
+    margin-left: 20px !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    color: #334155 !important;
+  }
+
+  .print-footer {
+    margin-top: 24px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    font-size: 11px !important;
+    color: #94a3b8 !important;
+    text-align: center !important;
   }
 }
