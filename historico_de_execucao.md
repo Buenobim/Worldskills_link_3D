@@ -36,19 +36,14 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
 
 ---
 
-### [2026-09-20] - Isolamento Seguro e Simples para WorldSkills (China)
-- **Isolamento Físico de Arquivos**:
-  - Gerados 4 arquivos JSON independentes na pasta `modelos/`:
-    - `Projeto_Atual_A.json`: Contém apenas o Módulo A (93 peças) e base. Zero dados de B, C e D.
-    - `Projeto_Atual_B.json`: Módulo A pré-montado no chão + Módulo B (192 peças). Zero dados de C e D.
-    - `Projeto_Atual_C.json`: Módulos A e B pré-montados no chão + Módulo C (103 peças). Zero dados de D.
-    - `Projeto_Atual_D.json`: Módulos A, B e C pré-montados no chão + Módulo D (21 peças).
-- **Blindagem da Interface do Competidor**:
-  - Quando um link de módulo é aberto, o seletor de módulos e o botão do gerador de links são totalmente ocultados.
-  - Competidores e experts não têm como trocar de módulo nem acessar links futuros.
-- **Painel do Líder Organizado**:
-  - Os cards foram organizados em **Link 1 — Módulo A**, **Link 2 — Módulo B**, **Link 3 — Módulo C**, **Link 4 — Módulo D** e **Obra Completa**.
-  - QR Codes nítidos prontos para impressão em papel ou envio no grupo do WhatsApp.
-- **Publicação na Nuvem e GitHub**:
-  - Deploy atualizado com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`).
-  - Commit e push sincronizados no GitHub `https://github.com/Buenobim/Worldskills_link_3D.git`.
+### [2026-09-20] - Blindagem de Segurança Absoluta (WorldSkills China)
+- **Eliminação Estrutural no Código HTML**:
+  - A tag `<select id="seletor-modulo">` foi **completamente excluída do arquivo HTML**. Não existe mais menu de seleção nem opções de outros módulos no código da página.
+  - O botão de atalho para o `gerador.html` foi **completamente excluído do arquivo HTML**.
+  - O competidor vê apenas um texto estático e inerte (ex: `Módulo A`), sem qualquer elemento clicável para alternar módulos.
+- **Proteção do Painel por PIN**:
+  - O `gerador.html` foi blindado com uma tela de bloqueio com PIN (`2026`). Concorrentes não conseguem ver nem gerar links se tentarem acessar o gerador diretamente.
+- **Prevenção Total de Cache**:
+  - O `firebase.json` foi configurado com cabeçalhos HTTP rigorosos: `Cache-Control: no-cache, no-store, must-revalidate, max-age=0`. Isso impede que navegadores guardem ou mostrem versões antigas da página.
+- **Deploy e Git**:
+  - Publicação completa realizada no Firebase Hosting (`https://visualizador3dwsc.web.app`) e sincronizada no GitHub.
