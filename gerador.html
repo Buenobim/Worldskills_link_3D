@@ -19,7 +19,19 @@
 </head>
 <body>
 
-  <div class="container">
+  <!-- Tela de Bloqueio com PIN de Segurança do Líder -->
+  <div id="tela-bloqueio" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:#090d16; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+    <div style="background:#0f172a; border:1px solid rgba(255,255,255,0.12); padding:32px; border-radius:18px; text-align:center; max-width:380px; width:90%; box-shadow:0 20px 40px rgba(0,0,0,0.6);">
+      <div style="font-size:38px; margin-bottom:12px;">🔒</div>
+      <h2 style="font-size:19px; margin-bottom:6px; color:#ffffff;">Área Exclusiva do Líder</h2>
+      <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">Digite o PIN de segurança para acessar e liberar os links:</p>
+      <input type="password" id="input-pin" placeholder="PIN de 4 dígitos" maxlength="6" style="background:#1e293b; border:1px solid rgba(255,255,255,0.2); color:#ffffff; padding:12px; border-radius:10px; font-size:20px; text-align:center; width:100%; letter-spacing:6px; margin-bottom:14px; outline:none;">
+      <button id="btn-desbloquear" class="btn-destaque" style="width:100%; justify-content:center; padding:12px;">Desbloquear Painel</button>
+      <div id="pin-erro" style="color:#ef4444; font-size:12px; margin-top:10px; display:none;">PIN incorreto. Acesso restrito ao Líder.</div>
+    </div>
+  </div>
+
+  <div class="container" id="conteudo-painel" style="display:none;">
     <!-- Cabeçalho -->
     <header class="cabecalho">
       <div class="cabecalho-info">

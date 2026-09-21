@@ -319,22 +319,20 @@ body, html {
   background: rgba(255, 255, 255, 0.16);
 }
 
-/* Seletor de Módulo (Dropdown elegante) */
-.seletor-modulo {
+/* Etiqueta Fixa do Módulo (Apenas informativa, sem interação ou menus) */
+.badge-modulo-fixo {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: var(--texto-principal);
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 500;
-  outline: none;
-  cursor: pointer;
-}
-
-.seletor-modulo option {
-  background: #1e293b;
-  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  user-select: none;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Contador de Peças */

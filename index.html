@@ -2,22 +2,27 @@
 <html lang="pt-BR">
 <!--
   ==============================================================================
-  index.html — Visualizador 3D WSC
+  index.html — Visualizador 3D WSC (Modo Seguro para Competição)
   ==============================================================================
   PARA QUE SERVE ESTA PÁGINA? (Explicação em termos simples):
-  Esta é a tela principal que a pessoa abre quando clica no link do celular ou PC!
-  Ela exibe o modelo 3D em tela cheia com a sequência de montagem 4D.
-  Possui controles limpos e modernos, câmera 100% livre e foco total no modelo.
+  Esta é a tela que os competidores e experts abrem pelo link ou QR Code no celular.
+  REGRAS RÍGIDAS DE SEGURANÇA WORLDSKILLS:
+  1. NÃO possui botão para o Gerador de Links (o competidor não sabe que existe).
+  2. NÃO possui seletor/dropdown de módulos (o competidor não consegue ver outros módulos).
+  3. Carrega APENAS o arquivo JSON exclusivo daquele módulo (sem dados de módulos futuros).
+  4. Câmera 100% livre para rotação e zoom com os dedos.
   ==============================================================================
 -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="theme-color" content="#090d16">
   <title>Visualizador 3D · WorldSkills 4D</title>
-  <link rel="stylesheet" href="css/visualizador.css">
+  <link rel="stylesheet" href="css/visualizador.css?v=3">
 
-  <!-- Mapeamento de bibliotecas para carregar o Three.js rapidamente direto da CDN -->
   <script type="importmap">
   {
     "imports": {
@@ -43,27 +48,17 @@
     👆 1 dedo: girar &nbsp;|&nbsp; ✌️ 2 dedos: zoom e mover
   </div>
 
-  <!-- Barra do Topo -->
+  <!-- Barra do Topo (Totalmente Limpa: Apenas nome e módulo ativo, sem botões externos) -->
   <header class="topo-bar">
     <div class="marca-projeto">
       <div class="logo-icone">4D</div>
       <div class="titulo-info">
-        <span id="nome-projeto" class="titulo-principal">WorldSkills · Visualizador</span>
+        <span id="nome-projeto" class="titulo-principal">WorldSkills 3D</span>
         <span id="badge-modulo" class="subtitulo-modulo">
           <span class="ponto-cor" id="cor-modulo-ponto"></span>
-          <span id="texto-modulo">Obra Completa</span>
+          <span id="texto-modulo">Carregando...</span>
         </span>
       </div>
-    </div>
-
-    <div class="acoes-topo">
-      <a href="gerador.html" class="btn-icone-topo" title="Abrir Gerador de Links">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-        </svg>
-        <span>Gerador de Links</span>
-      </a>
     </div>
   </header>
 
@@ -84,21 +79,17 @@
       <div class="grupo-esquerda">
         <!-- Botão Play / Pausa -->
         <button id="btn-play" class="btn-play" aria-label="Reproduzir montagem">
-          <!-- Ícone Play -->
           <svg id="icone-play" viewBox="0 0 24 24">
             <polygon points="6 3 20 12 6 21 6 3"></polygon>
           </svg>
-          <!-- Ícone Pausa (oculto inicialmente) -->
           <svg id="icone-pausa" viewBox="0 0 24 24" style="display:none;">
             <rect x="6" y="4" width="4" height="16"></rect>
             <rect x="14" y="4" width="4" height="16"></rect>
           </svg>
         </button>
 
-        <!-- Seletor de Módulos (A, B, C... ou Todos) -->
-        <select id="seletor-modulo" class="seletor-modulo" title="Filtrar por Módulo">
-          <option value="">Todos os Módulos</option>
-        </select>
+        <!-- Etiqueta Fixa do Módulo (Apenas texto informativo, NUNCA um menu seletor!) -->
+        <span id="etiqueta-modulo" class="badge-modulo-fixo">Módulo A</span>
       </div>
 
       <div class="grupo-direita">
@@ -121,10 +112,9 @@
 
   <!-- Script principal de inicialização da página -->
   <script type="module">
-    import { iniciarCena, carregarProjeto, alternarPlay, atualizarInstanteAnimacao, definirVelocidade } from "./js/visualizador.js?v=2";
-    import { iniciarFirebase } from "./js/firebase-config.js?v=2";
+    import { iniciarCena, carregarProjeto, alternarPlay, atualizarInstanteAnimacao, definirVelocidade } from "./js/visualizador.js?v=3";
+    import { iniciarFirebase } from "./js/firebase-config.js?v=3";
 
-    // Conecta com o Firebase
     iniciarFirebase();
 
     // Elementos da Interface
@@ -140,142 +130,99 @@
     const spanTempoTotal = document.getElementById("tempo-total");
     const btnVelocidade = document.getElementById("btn-velocidade");
     const btnEnquadrar = document.getElementById("btn-enquadrar");
-    const seletorModulo = document.getElementById("seletor-modulo");
+    const etiquetaModulo = document.getElementById("etiqueta-modulo");
     const textoModulo = document.getElementById("texto-modulo");
     const corModuloPonto = document.getElementById("cor-modulo-ponto");
     const contadorPecas = document.getElementById("contador-pecas");
     const nomeProjetoEl = document.getElementById("nome-projeto");
 
-    // 1. Lê os parâmetros da URL (ex: ?projeto=Projeto_Atual&modulo=A)
+    // 1. Lê os parâmetros da URL
     const urlParams = new URLSearchParams(window.location.search);
     const projetoId = urlParams.get("projeto") || "Projeto_Atual";
-    const moduloParam = urlParams.get("modulo") || null;
+    const moduloParam = urlParams.get("modulo") ? urlParams.get("modulo").trim().toUpperCase() : "A";
 
-    nomeProjetoEl.innerText = projetoId === "Projeto_Atual" ? "PROJETO ATUAL WSC" : projetoId.replace(/[-_]/g, " ").toUpperCase();
+    nomeProjetoEl.innerText = "WORLDSKILLS 3D";
 
     // 2. Inicia o motor 3D
     iniciarCena(container3D);
 
-    // Função simples para formatar segundos em minutos:segundos (ex: 01:25)
     function formatarSegundos(s) {
       const min = Math.floor(s / 60);
       const seg = Math.floor(s % 60);
       return `${min.toString().padStart(2, "0")}:${seg.toString().padStart(2, "0")}`;
     }
 
-    // 3. Carrega o projeto IFC e o JSON correspondente (usa o arquivo isolado do módulo se existir)
+    // 3. SEGURANÇA TOTAL: Carrega EXCLUSIVAMENTE o arquivo isolado do módulo liberado!
     const caminhoIfc = `modelos/${projetoId}.ifc`;
-    let caminhoJson = `modelos/${projetoId}.json`;
-    if (moduloParam) {
-      caminhoJson = `modelos/${projetoId}_${moduloParam.toUpperCase()}.json`;
-      // Esconde o botão do gerador para o competidor não ter acesso à lista de links
-      const btnTopo = document.querySelector(".acoes-topo");
-      if (btnTopo) btnTopo.style.display = "none";
-      // Esconde o seletor de módulos para o competidor não conseguir trocar de módulo
-      seletorModulo.style.display = "none";
-    }
+    // Se pediu Módulo A, carrega Projeto_Atual_A.json (que contém ZERO dados de B, C e D)
+    const caminhoJson = `modelos/${projetoId}_${moduloParam}.json`;
 
     async function carregar() {
       try {
-        let dados;
-        try {
-          dados = await carregarProjeto(
-            caminhoIfc,
-            caminhoJson,
-            moduloParam,
-            (msg, progresso) => {
-              carregamentoStatus.innerText = msg;
-              barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
-            }
-          );
-        } catch (eJsonIsolado) {
-          // Fallback para o arquivo geral caso o isolado não exista
-          dados = await carregarProjeto(
-            caminhoIfc,
-            `modelos/${projetoId}.json`,
-            moduloParam,
-            (msg, progresso) => {
-              carregamentoStatus.innerText = msg;
-              barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
-            }
-          );
-        }
-
-        // Se for visualização da obra completa (sem módulo restrito), preenche o seletor
-        if (!moduloParam) {
-          seletorModulo.innerHTML = `<option value="">Todos os Módulos (Obra Completa)</option>`;
-          if (dados.cronograma && dados.cronograma.modulos) {
-            dados.cronograma.modulos.forEach((m) => {
-              const rot = m.rotulo || m.id;
-              const opt = document.createElement("option");
-              opt.value = rot;
-              opt.innerText = m.nome || `Módulo ${rot}`;
-              seletorModulo.appendChild(opt);
-            });
+        const dados = await carregarProjeto(
+          caminhoIfc,
+          caminhoJson,
+          moduloParam,
+          (msg, progresso) => {
+            carregamentoStatus.innerText = msg;
+            barraProgresso.style.width = `${Math.round(progresso * 100)}%`;
           }
+        );
+
+        // Atualiza textos fixos informativos
+        const nomeModTexto = `Módulo ${moduloParam}`;
+        textoModulo.innerText = nomeModTexto;
+        etiquetaModulo.innerText = nomeModTexto;
+
+        if (dados.cronograma && dados.cronograma.moduloAtivo) {
+          corModuloPonto.style.backgroundColor = dados.cronograma.moduloAtivo.cor || "#38bdf8";
         }
 
-        // Atualiza os textos do cabeçalho
-        if (moduloParam && dados.cronograma.moduloAtivo) {
-          const modAtivo = dados.cronograma.moduloAtivo;
-          textoModulo.innerText = modAtivo.nome || `Módulo ${modAtivo.rotulo || modAtivo.id}`;
-          corModuloPonto.style.backgroundColor = modAtivo.cor || "#38bdf8";
-        } else {
-          textoModulo.innerText = "Obra Completa";
-          corModuloPonto.style.backgroundColor = "#38bdf8";
-        }
-
-        // Configura os limites da barra de tempo
+        // Configura barra de tempo e contador
         sliderTempo.max = dados.cronograma.duracaoTotal;
         spanTempoTotal.innerText = formatarSegundos(dados.cronograma.duracaoTotal);
         contadorPecas.innerText = `${dados.cronograma.pecas.length} peças`;
 
-        // Esconde a tela de carregamento suavemente
         setTimeout(() => {
           telaCarregamento.classList.add("oculto");
-        }, 400);
+        }, 300);
 
       } catch (erro) {
         console.error("Erro ao carregar:", erro);
-        carregamentoStatus.innerText = "Não foi possível carregar o modelo. Verifique os arquivos.";
+        carregamentoStatus.innerText = `Módulo ${moduloParam} não disponível ou não liberado pelo Líder.`;
       }
     }
 
     carregar();
 
-    // 4. Conecta os botões e eventos com a animação
+    // 4. Conecta controles
     btnPlay.addEventListener("click", () => {
       const tocando = alternarPlay();
       iconePlay.style.display = tocando ? "none" : "block";
       iconePausa.style.display = tocando ? "block" : "none";
     });
 
-    // Quando o tempo anda, atualiza o slider e o texto
     window.addEventListener("tempo-mudou", (e) => {
-      const { tempo, total } = e.detail;
+      const { tempo } = e.detail;
       sliderTempo.value = tempo;
       spanTempoAtual.innerText = formatarSegundos(tempo);
     });
 
-    // Ao chegar ao fim da sequência
     window.addEventListener("fim-sequencia", () => {
       iconePlay.style.display = "block";
       iconePausa.style.display = "none";
     });
 
-    // Quando o usuário arrasta o dedo na barra de tempo
     sliderTempo.addEventListener("input", (e) => {
       const novoTempo = parseFloat(e.target.value);
       spanTempoAtual.innerText = formatarSegundos(novoTempo);
       atualizarInstanteAnimacao(novoTempo);
     });
 
-    // Botão de Centralizar
     btnEnquadrar.addEventListener("click", () => {
       window.dispatchEvent(new CustomEvent("solicitar-enquadrar"));
     });
 
-    // Troca de Velocidade (1x -> 1.5x -> 2x -> 0.5x -> 1x)
     const velocidades = [1.0, 1.5, 2.0, 0.5];
     let idxVel = 0;
     btnVelocidade.addEventListener("click", () => {
@@ -283,18 +230,6 @@
       const v = velocidades[idxVel];
       btnVelocidade.innerText = `${v}x`;
       definirVelocidade(v);
-    });
-
-    // Troca de Módulo pelo Seletor
-    seletorModulo.addEventListener("change", (e) => {
-      const novoMod = e.target.value;
-      const novaUrl = new URL(window.location.href);
-      if (novoMod) {
-        novaUrl.searchParams.set("modulo", novoMod);
-      } else {
-        novaUrl.searchParams.delete("modulo");
-      }
-      window.location.href = novaUrl.toString();
     });
   </script>
 </body>

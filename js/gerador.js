@@ -34,6 +34,44 @@ const btnFecharModal = document.getElementById("btn-fechar-modal");
 const textareaExportar = document.getElementById("textarea-exportar");
 const btnCopiarTodos = document.getElementById("btn-copiar-todos");
 
+// Elementos da Tela de Bloqueio por PIN
+const telaBloqueio = document.getElementById("tela-bloqueio");
+const conteudoPainel = document.getElementById("conteudo-painel");
+const inputPin = document.getElementById("input-pin");
+const btnDesbloquear = document.getElementById("btn-desbloquear");
+const pinErro = document.getElementById("pin-erro");
+
+// PIN Oficial do Líder (Pode ser alterado quando desejar)
+const PIN_LIDER = "2026";
+
+function verificarAutenticacao() {
+  const autenticado = sessionStorage.getItem("wsc_lider_autenticado");
+  if (autenticado === "true") {
+    telaBloqueio.style.display = "none";
+    conteudoPainel.style.display = "block";
+    return true;
+  }
+  return false;
+}
+
+if (btnDesbloquear && inputPin) {
+  btnDesbloquear.addEventListener("click", () => {
+    if (inputPin.value === PIN_LIDER) {
+      sessionStorage.setItem("wsc_lider_autenticado", "true");
+      telaBloqueio.style.display = "none";
+      conteudoPainel.style.display = "block";
+    } else {
+      pinErro.style.display = "block";
+      inputPin.value = "";
+      inputPin.focus();
+    }
+  });
+
+  inputPin.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") btnDesbloquear.click();
+  });
+}
+
 let dadosProjetoAtual = null;
 let linksGerados = [];
 
@@ -42,6 +80,8 @@ let linksGerados = [];
  * O que ela faz: Preenche os menus e carrega os módulos do primeiro projeto.
  */
 export async function iniciarGerador() {
+  verificarAutenticacao();
+
   // Preenche a lista de projetos
   selectProjeto.innerHTML = "";
   PROJETOS_DISPONIVEIS.forEach((p) => {
