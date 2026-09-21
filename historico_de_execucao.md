@@ -45,5 +45,15 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
   - O `gerador.html` foi blindado com uma tela de bloqueio com PIN (`2026`). Concorrentes não conseguem ver nem gerar links se tentarem acessar o gerador diretamente.
 - **Prevenção Total de Cache**:
   - O `firebase.json` foi configurado com cabeçalhos HTTP rigorosos: `Cache-Control: no-cache, no-store, must-revalidate, max-age=0`. Isso impede que navegadores guardem ou mostrem versões antigas da página.
-- **Deploy e Git**:
-  - Publicação completa realizada no Firebase Hosting (`https://visualizador3dwsc.web.app`) e sincronizada no GitHub.
+
+---
+
+### [2026-09-20] - Vista Isométrica Inicial e Estabilidade Total do Zoom
+- **Vista Isométrica Frontal Padrão**:
+  - A câmera agora inicia automaticamente no ângulo isométrico oficial (olhando de frente para o canto interior, com a parede do mosaico à esquerda e a parede da porta à direita).
+- **Correção Definitiva do Zoom (Eliminação do Snap-back)**:
+  - Identificada a causa do retorno indesejado: o evento de duplo toque na tela disparava falsamente quando o usuário levantava os dois dedos após a pinça de zoom.
+  - O gatilho de duplo toque acidental foi removido dos controles de toque, mantendo o zoom 100% firme onde o usuário deixar.
+  - O botão de enquadrar da barra inferior agora recentraliza perfeitamente na vista isométrica oficial sempre que o usuário desejar.
+- **Publicação**:
+  - Deploy final no Firebase Hosting (`https://visualizador3dwsc.web.app`) e sincronizado no GitHub.
