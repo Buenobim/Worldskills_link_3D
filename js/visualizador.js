@@ -13,8 +13,8 @@
  */
 
 import * as THREE from "three";
-import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js?v=5";
-import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js?v=5";
+import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js?v=6";
+import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js?v=6";
 
 // Endereço da biblioteca que lê arquivos IFC no navegador
 const URL_WEBIFC = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.57/";
@@ -221,6 +221,12 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
   const estadoJson = dadosJson ? (dadosJson.estado || dadosJson) : {};
   const mapaCoresJson = estadoJson.cores || {};
 
+  // Caixa envolvente do MODELO INTEIRO nas coordenadas brutas do IFC. Usada para
+  // recentralizar a cena do mesmo jeito que o editor "Plataforma 4D" faz — os
+  // pontos de um "movimento livre" (ex: aplicador de silicone) são gravados
+  // relativos a esse centro recentralizado, não às coordenadas brutas do arquivo.
+  const caixaModeloBruta = new THREE.Box3();
+
   // Cria os objetos Three.js e mapeia pelos GUIDs
   for (const [eid, listaGeom] of malhasPorExpressID) {
     let guid = "E" + eid;
@@ -237,6 +243,13 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
 
     // Verifica se a peça tem pintura manual salva no JSON
     const corManual = mapaCoresJson[guid];
+
+    // Caixa envolvente da peça em coordenadas do mundo (para peças com "movimento
+    // livre", como o aplicador de silicone: precisamos saber o centro real dela).
+    // Calculada manualmente (sem usar Box3.setFromObject) porque as malhas usam
+    // matrixAutoUpdate=false com a matriz do IFC já pronta — deixar o Three.js
+    // recalcular a matriz apagaria essa transformação.
+    const caixaPeca = new THREE.Box3();
 
     for (const d of listaGeom) {
       const geo = new THREE.BufferGeometry();
@@ -267,20 +280,40 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
 
       subGrupo.add(mesh);
       listaMeshes.push(mesh);
+
+      geo.computeBoundingBox();
+      if (geo.boundingBox) {
+        const caixaLocal = geo.boundingBox.clone().applyMatrix4(mesh.matrix);
+        caixaPeca.union(caixaLocal);
+      }
     }
 
     grupoModelo.add(subGrupo);
+    if (!caixaPeca.isEmpty()) caixaModeloBruta.union(caixaPeca);
     elementosPorGuid.set(guid, {
       grupo: subGrupo,
       meshes: listaMeshes,
       corOriginal: corHexOriginal,
-      posicaoBase: subGrupo.position.clone()
+      posicaoBase: subGrupo.position.clone(),
+      centro: caixaPeca.isEmpty() ? new THREE.Vector3() : caixaPeca.getCenter(new THREE.Vector3())
     });
   }
 
   try {
     api.CloseModel(modelID);
   } catch (e) {}
+
+  // Recentraliza o modelo inteiro (centro em X/Z, piso em Y=0) — igual ao editor
+  // "Plataforma 4D". Sem isso, as coordenadas absolutas de um "movimento livre"
+  // (de/ate) não bateriam com a posição real das peças nesta cena.
+  if (!caixaModeloBruta.isEmpty()) {
+    const centroModelo = caixaModeloBruta.getCenter(new THREE.Vector3());
+    const origemRecentragem = new THREE.Vector3(centroModelo.x, caixaModeloBruta.min.y, centroModelo.z);
+    grupoModelo.position.set(-origemRecentragem.x, -origemRecentragem.y, -origemRecentragem.z);
+    for (const el of elementosPorGuid.values()) {
+      el.centro.sub(origemRecentragem);
+    }
+  }
 
   enquadrarModelo(camera, controles, grupoModelo);
   atualizarInstanteAnimacao(0);
@@ -304,6 +337,32 @@ export function atualizarInstanteAnimacao(novoTempo) {
   const ehModuloIsolado = Boolean(cronogramaAtual.moduloAtivo);
 
   for (const [guid, el] of elementosPorGuid) {
+    const estadoInfo = estados.get(guid);
+
+    // 0. Peça com movimento livre (ex: aplicador de silicone percorrendo uma junta):
+    // ignora completamente o cronograma normal de montagem — ela só existe visível
+    // dentro da própria janela de tempo do movimento, indo do ponto "de" ao "ate".
+    if (estadoInfo && estadoInfo.estado === "movimento") {
+      el.grupo.visible = true;
+      const mv = estadoInfo.movimentoInfo;
+      const u = Math.min(Math.max(estadoInfo.progressoAnim, 0), 1);
+      const alvo = new THREE.Vector3(
+        mv.de[0] + (mv.ate[0] - mv.de[0]) * u,
+        mv.de[1] + (mv.ate[1] - mv.de[1]) * u,
+        mv.de[2] + (mv.ate[2] - mv.de[2]) * u
+      );
+      el.grupo.position.copy(alvo).sub(el.centro || new THREE.Vector3());
+      for (const m of el.meshes) {
+        m.material = m.userData.materialOriginal;
+      }
+      continue;
+    }
+    if (estadoInfo && estadoInfo.estado === "oculto_movimento") {
+      // Fora da janela do movimento: a peça (ferramenta) não existe na cena
+      el.grupo.visible = false;
+      continue;
+    }
+
     // 1. Peça fixa da base (sempre montada e sólida)
     if (cronogramaAtual.fixos && cronogramaAtual.fixos.has(guid)) {
       el.grupo.visible = true;
@@ -313,8 +372,6 @@ export function atualizarInstanteAnimacao(novoTempo) {
       }
       continue;
     }
-
-    const estadoInfo = estados.get(guid);
 
     // 2. Se a peça não pertence à sequência nem aos fixos
     if (!estadoInfo) {

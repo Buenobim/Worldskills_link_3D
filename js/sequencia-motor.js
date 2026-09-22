@@ -46,7 +46,7 @@ export function encontrarModulo(modulos, filtro) {
  */
 export function prepararCronograma(dadosJson, filtroModulo = null) {
   if (!dadosJson) {
-    return { pecas: [], duracaoTotal: 0, modulos: [], fixos: new Set(), pecasPreMontadas: new Set() };
+    return { pecas: [], duracaoTotal: 0, modulos: [], fixos: new Set(), pecasPreMontadas: new Set(), movimentos: [], guidsComMovimento: new Set() };
   }
 
   // Suporta tanto a estrutura com .estado.modulos quanto .modulos na raiz
@@ -60,6 +60,8 @@ export function prepararCronograma(dadosJson, filtroModulo = null) {
   const moduloAlvo = (filtroEfetivo && filtroEfetivo !== "FULL") ? (encontrarModulo(modulos, filtroEfetivo) || modulos[0]) : null;
 
   const pecas = [];
+  const movimentos = [];
+  const guidsComMovimento = new Set();
   const pecasPreMontadas = new Set(dadosJson.pre_montados || []);
   let tempoAcumulado = 0;
 
@@ -91,6 +93,8 @@ export function prepararCronograma(dadosJson, filtroModulo = null) {
       continue;
     }
 
+    const tempoInicioModulo = tempoAcumulado;
+
     // Adiciona as peças deste módulo na sequência exata definida
     for (let idx = 0; idx < seq.length; idx++) {
       const guid = seq[idx];
@@ -117,6 +121,27 @@ export function prepararCronograma(dadosJson, filtroModulo = null) {
 
       tempoAcumulado = fim;
     }
+
+    // Peças com movimento livre (ex: aplicador de silicone percorrendo uma junta):
+    // "mod.movimentos" guarda o tempo em horas de prova relativas ao início deste módulo
+    // (mv.t / mod.horas = fração do módulo já percorrida). Convertemos essa fração para
+    // o tempo de vídeo real deste módulo, que pode durar bem menos que as horas reais.
+    const tempoFimModulo = tempoAcumulado;
+    const duracaoVideoModulo = Math.max(tempoFimModulo - tempoInicioModulo, 0.0001);
+    const horasModulo = mod.horas || 1;
+
+    for (const mv of (mod.movimentos || [])) {
+      guidsComMovimento.add(mv.guid);
+      const fracIni = Math.min(Math.max(mv.t / horasModulo, 0), 1);
+      const fracFim = Math.min(Math.max((mv.t + mv.dur) / horasModulo, 0), 1);
+      movimentos.push({
+        guid: mv.guid,
+        de: mv.de,
+        ate: mv.ate,
+        inicio: tempoInicioModulo + fracIni * duracaoVideoModulo,
+        fim: tempoInicioModulo + fracFim * duracaoVideoModulo
+      });
+    }
   }
 
   return {
@@ -125,7 +150,9 @@ export function prepararCronograma(dadosJson, filtroModulo = null) {
     modulos,
     moduloAtivo: moduloAlvo,
     fixos: fixosSet,
-    pecasPreMontadas
+    pecasPreMontadas,
+    movimentos,
+    guidsComMovimento
   };
 }
 
@@ -182,6 +209,29 @@ export function avaliarEstadoPecas(cronograma, tempoAtual, modoFantasma = true) 
         cor: null,
         pecaInfo: p
       });
+    }
+  }
+
+  // Peças controladas por um movimento livre (ex: aplicador de silicone percorrendo
+  // uma junta): elas não pertencem à sequência normal de montagem, então só existem
+  // visíveis durante a própria janela de tempo do movimento — nem antes, nem depois.
+  if (cronograma.guidsComMovimento) {
+    for (const guid of cronograma.guidsComMovimento) {
+      resultado.set(guid, { estado: "oculto_movimento", progressoAnim: 0, deslocamento: 0, cor: null });
+    }
+  }
+  if (cronograma.movimentos) {
+    for (const mv of cronograma.movimentos) {
+      if (tempoAtual >= mv.inicio && tempoAtual < mv.fim) {
+        const frac = (tempoAtual - mv.inicio) / Math.max(mv.fim - mv.inicio, 0.001);
+        resultado.set(mv.guid, {
+          estado: "movimento",
+          progressoAnim: frac,
+          deslocamento: 0,
+          cor: null,
+          movimentoInfo: mv
+        });
+      }
     }
   }
 

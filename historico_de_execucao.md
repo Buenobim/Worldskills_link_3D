@@ -142,5 +142,19 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
   - `js/sequencia-motor.js`: a direção de cada peça agora respeita `mod.dirs[guid]` antes de cair para `mod.dir`.
   - `js/visualizador.js`: a animação de entrada agora desloca a peça ao longo do eixo correto (cima/baixo/esquerda/direita/frente/trás), não apenas verticalmente como antes. Testado nos 4 módulos e na obra completa sem erros de console.
   - Cache-busting das versões dos módulos JS atualizado (`?v=20260922_modulos06`) para garantir que o navegador não sirva a versão antiga em cache.
-- **Pendente / Não Portado**:
-  - O projeto de referência também introduziu uma trilha de "movimentos" livres por peça (`estado.movimentos`: reposicionamento explícito de uma peça específica em um ponto no tempo, de um ponto 3D a outro). Essa trilha usa uma escala de tempo própria do editor "Plataforma 4D" (baseada em horas de prova convertidas em segundos de vídeo por um motor de ritmo específico), incompatível com o cálculo de tempo simplificado deste visualizador (que apenas acumula durações fixas por peça). Os dados já estão salvos em `Projeto_Atual.json`, mas a animação de "movimentos" ainda não é reproduzida — decidir com o Bruno se vale a pena portar essa lógica antes de investir tempo nisso.
+
+---
+
+### [2026-09-22] - Aplicador de Silicone (Trilha de "Movimentos" Livres) e Correção de Coordenadas
+- **Contexto**: o Bruno percebeu que o aplicador de silicone (ferramenta que percorre a junta entre as placas no Módulo B) não aparecia no visualizador, mesmo já estando presente no projeto exportado (`estado.movimentos`). Investigado o projeto de referência `Plataforma_4D - WSC - MELHORADO` para entender como essa trilha funciona lá.
+- **O que é a trilha de movimentos**: além da sequência normal de montagem (peça aparece e fica), o editor permite gravar um "movimento livre" — uma peça específica (ex: o aplicador, um `IFCBUILDINGELEMENTPROXY` do modelo) se deslocando de um ponto 3D a outro num intervalo de tempo. Ela só existe visível dentro dessa janela de tempo — some antes e depois.
+- **Implementado em `js/sequencia-motor.js`**:
+  - `prepararCronograma` agora lê `mod.movimentos` (tempo gravado em horas relativas ao início do próprio módulo) e converte para o tempo de vídeo real, na mesma proporção do módulo (`fração das horas do módulo × duração de vídeo do módulo`), então funciona tanto no link isolado do módulo quanto na obra completa.
+  - `avaliarEstadoPecas` retorna um estado `"movimento"` (com o ponto interpolado) enquanto a peça está na janela, e `"oculto_movimento"` fora dela.
+- **Implementado em `js/visualizador.js`**:
+  - Foi descoberta e corrigida uma incompatibilidade de coordenadas: o editor "Plataforma 4D" recentraliza o modelo inteiro após carregar o IFC (centro em X/Z, piso em Y=0) e grava os pontos "de"/"ate" nessa escala recentralizada — este visualizador carregava o IFC nas coordenadas brutas do arquivo, então o aplicador aparecia longe do lugar certo (fora da tela / dentro de paredes). Corrigido aplicando a mesma recentralização (`grupoModelo.position`) logo após montar as peças.
+  - Cada peça agora guarda seu centro real em coordenadas de mundo (`el.centro`, calculado manualmente via `Box3.applyMatrix4` para não atropelar a matriz já pronta do IFC), usado para posicionar a peça durante o movimento.
+  - Peça em movimento: visível, posição interpolada linearmente entre "de" e "ate". Fora da janela: oculta.
+- **Regenerados os 5 arquivos de módulo** (script local) para embutir os movimentos já convertidos para o tempo relativo de cada módulo — o aplicador de silicone acabou caindo dentro do Módulo B, perto do fim da sua janela de vídeo.
+- **Testado**: aplicador aparece só dentro da janela certa (Módulo B, ~99.8s a ~111.1s de vídeo isolado), sobe corretamente de "de" a "ate", some antes e depois. Módulos A/C/D e obra completa continuam carregando e enquadrando normalmente. Sem erros de console.
+- Cache-busting atualizado (`?v=20260922_movimentos`).
