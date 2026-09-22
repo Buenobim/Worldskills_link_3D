@@ -1,7 +1,7 @@
 {
   "tipo": "wsc4d-projeto",
   "nome": "teste",
-  "atualizado": "2026-09-22T02:14:06.411Z",
+  "atualizado": "2026-09-22T17:31:27.610Z",
   "estado": {
     "numDias": 4,
     "velocidade": 0.5,
@@ -57,7 +57,7 @@
       "sol": false
     },
     "render": {
-      "preset": "alta",
+      "preset": "rapida",
       "ceu": "estudio",
       "tonemap": "neutro",
       "exposicao": 1.01,
@@ -573,13 +573,15 @@
       {
         "id": "M1-B",
         "nome": "Módulo B",
-        "horas": 54.8,
+        "horas": 56.133333,
         "cor": "#3f7fd9",
         "dia": 2,
         "seq": [
           "05wfFLeuPBEv3bvVNYYrSD",
           "021fctLO9BvvcLxrYNuARy",
           "0r3m9KXTH7dQEHyg3LNaNz",
+          "2PU8n9MJTC1vPW6M5K5Io4",
+          "2PU8n9MJTC1vPW6M5K5IpM",
           "0r3m9KXTH7dQEHyg3LNaNZ",
           "0r3m9KXTH7dQEHyg3LNaNY",
           "0r3m9KXTH7dQEHyg3LNaNy",
@@ -1556,6 +1558,18 @@
           },
           "021fctLO9BvvcLxrYNuAFI": {
             "ini": 53.466667,
+            "dur": 1.333333
+          },
+          "2PU8n9MJTC1vPW6M5K5Io4": {
+            "ini": 1.454188,
+            "dur": 0.151396
+          },
+          "2PU8n9MJTC1vPW6M5K5IpM": {
+            "ini": 1.605584,
+            "dur": 0.151396
+          },
+          "2PU8n9MJTC1vPW6M5K5JHH": {
+            "ini": 54.8,
             "dur": 1.333333
           }
         }
@@ -2714,11 +2728,29 @@
         ]
       }
     ],
-    "modelo": "Projeto WorldSkills 04.ifc",
+    "modelo": "Projeto WorldSkills 06.ifc",
     "destaqueAtivo": "solida",
     "mp4Timeline": false,
     "mp4Idioma": "en",
     "mp4Res": "2560x1440",
-    "mp4Fps": 60
+    "mp4Fps": 60,
+    "movimentos": [
+      {
+        "id": "mvmucy6okamag3",
+        "guid": "2PU8n9MJTC1vPW6M5K5JHH",
+        "de": [
+          0.7975744992027395,
+          0.7090685247611017,
+          -0.7715788354260212
+        ],
+        "ate": [
+          0.8386303022016185,
+          1.9801578276749854,
+          -0.7715788354260217
+        ],
+        "t": 62.08333333333333,
+        "dur": 5.666666666666671
+      }
+    ]
   }
 }

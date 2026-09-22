@@ -108,13 +108,15 @@
     {
       "id": "M1-B",
       "nome": "Módulo B",
-      "horas": 54.8,
+      "horas": 56.133333,
       "cor": "#3f7fd9",
       "dia": 2,
       "seq": [
         "05wfFLeuPBEv3bvVNYYrSD",
         "021fctLO9BvvcLxrYNuARy",
         "0r3m9KXTH7dQEHyg3LNaNz",
+        "2PU8n9MJTC1vPW6M5K5Io4",
+        "2PU8n9MJTC1vPW6M5K5IpM",
         "0r3m9KXTH7dQEHyg3LNaNZ",
         "0r3m9KXTH7dQEHyg3LNaNY",
         "0r3m9KXTH7dQEHyg3LNaNy",
@@ -1091,6 +1093,18 @@
         },
         "021fctLO9BvvcLxrYNuAFI": {
           "ini": 53.466667,
+          "dur": 1.333333
+        },
+        "2PU8n9MJTC1vPW6M5K5Io4": {
+          "ini": 1.454188,
+          "dur": 0.151396
+        },
+        "2PU8n9MJTC1vPW6M5K5IpM": {
+          "ini": 1.605584,
+          "dur": 0.151396
+        },
+        "2PU8n9MJTC1vPW6M5K5JHH": {
+          "ini": 54.8,
           "dur": 1.333333
         }
       }

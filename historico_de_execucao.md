@@ -128,3 +128,19 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
   - Adicionado botão de som na barra flutuante para mutar ou desmutar a qualquer momento com apenas 1 toque.
 - **Preservação Total dos Links**:
   - Todos os links oficiais continuam exatamente os mesmos, sem qualquer alteração de URL.
+
+---
+
+### [2026-09-22] - Nova Revisão do Modelo (WorldSkills 06) e Suporte a Direção de Entrada por Peça
+- **Atualização do Modelo IFC 3D**:
+  - Atualizado `modelos/Projeto_Atual.ifc` a partir da nova revisão `Projeto WorldSkills 06.ifc`.
+- **Atualização do Cronograma e Sequência JSON**:
+  - Atualizado `modelos/Projeto_Atual.json` com a revisão completa exportada do editor (413 peças no total: A=93, B=194, C=105, D=21).
+  - Reprocessados todos os arquivos segregados por módulo para os links não-óbvios (`modulo_mod-8k2p.json`, `modulo_mod-4t7b.json`, `modulo_mod-1w9v.json`, `modulo_mod-6n3r.json`, `modulo_full-model.json`), mantendo os mesmos links já divulgados.
+- **Suporte a Direção de Entrada por Peça (`dirs`)**:
+  - O projeto exportado do editor "Plataforma 4D" agora traz, além da direção padrão do módulo (`dir`), uma direção específica por peça (`dirs[guid]`: cima, baixo, esquerda, direita, frente ou trás) — usada, por exemplo, para simular uma porta ou soleira encaixando de lado em vez de cair de cima.
+  - `js/sequencia-motor.js`: a direção de cada peça agora respeita `mod.dirs[guid]` antes de cair para `mod.dir`.
+  - `js/visualizador.js`: a animação de entrada agora desloca a peça ao longo do eixo correto (cima/baixo/esquerda/direita/frente/trás), não apenas verticalmente como antes. Testado nos 4 módulos e na obra completa sem erros de console.
+  - Cache-busting das versões dos módulos JS atualizado (`?v=20260922_modulos06`) para garantir que o navegador não sirva a versão antiga em cache.
+- **Pendente / Não Portado**:
+  - O projeto de referência também introduziu uma trilha de "movimentos" livres por peça (`estado.movimentos`: reposicionamento explícito de uma peça específica em um ponto no tempo, de um ponto 3D a outro). Essa trilha usa uma escala de tempo própria do editor "Plataforma 4D" (baseada em horas de prova convertidas em segundos de vídeo por um motor de ritmo específico), incompatível com o cálculo de tempo simplificado deste visualizador (que apenas acumula durações fixas por peça). Os dados já estão salvos em `Projeto_Atual.json`, mas a animação de "movimentos" ainda não é reproduzida — decidir com o Bruno se vale a pena portar essa lógica antes de investir tempo nisso.

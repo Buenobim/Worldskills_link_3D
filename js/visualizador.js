@@ -13,8 +13,8 @@
  */
 
 import * as THREE from "three";
-import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js?v=4";
-import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js?v=4";
+import { configurarControlesCamera, enquadrarModelo } from "./controles-toque.js?v=5";
+import { prepararCronograma, avaliarEstadoPecas } from "./sequencia-motor.js?v=5";
 
 // Endereço da biblioteca que lê arquivos IFC no navegador
 const URL_WEBIFC = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.57/";
@@ -25,12 +25,20 @@ let grupoModelo = null;
 let ifcApi = null;
 
 // Dados do modelo e da sequência
-const elementosPorGuid = new Map(); // guid -> { grupo, meshes, corOriginal, posicaoYBase }
+const elementosPorGuid = new Map(); // guid -> { grupo, meshes, corOriginal, posicaoBase }
 let cronogramaAtual = null;
 let tempoAtual = 0;
 let estaTocando = false;
 let velocidadeReproducao = 1.0;
 let relogioAnimacao = new THREE.Clock();
+
+// De onde a peça vem antes de assentar (vetor unitário no mundo).
+// Mesma convenção usada no editor Plataforma 4D, para os projetos ficarem compatíveis.
+const EIXOS_ENTRADA = {
+  cima: [0, 1, 0], baixo: [0, -1, 0],
+  esq: [-1, 0, 0], dir: [1, 0, 0],
+  frente: [0, 0, 1], tras: [0, 0, -1]
+};
 
 // Material fantasma translúcido
 const materialFantasma = new THREE.MeshStandardMaterial({
@@ -266,7 +274,7 @@ export async function carregarProjeto(caminhoIfc, caminhoJson, filtroModulo = nu
       grupo: subGrupo,
       meshes: listaMeshes,
       corOriginal: corHexOriginal,
-      posicaoYBase: subGrupo.position.y
+      posicaoBase: subGrupo.position.clone()
     });
   }
 
@@ -299,7 +307,7 @@ export function atualizarInstanteAnimacao(novoTempo) {
     // 1. Peça fixa da base (sempre montada e sólida)
     if (cronogramaAtual.fixos && cronogramaAtual.fixos.has(guid)) {
       el.grupo.visible = true;
-      el.grupo.position.y = el.posicaoYBase;
+      el.grupo.position.copy(el.posicaoBase);
       for (const m of el.meshes) {
         m.material = m.userData.materialOriginal;
       }
@@ -325,7 +333,7 @@ export function atualizarInstanteAnimacao(novoTempo) {
     // 3. Peça pré-montada (de um módulo anterior que serve de alicerce)
     if (estadoInfo.estado === "pre_montado") {
       el.grupo.visible = true;
-      el.grupo.position.y = el.posicaoYBase;
+      el.grupo.position.copy(el.posicaoBase);
       for (const m of el.meshes) {
         m.material = m.userData.materialOriginal;
       }
@@ -335,14 +343,21 @@ export function atualizarInstanteAnimacao(novoTempo) {
     // 4. Peça montada na sequência atual: mantém sua cor e material real original do IFC
     if (estadoInfo.estado === "montado") {
       el.grupo.visible = true;
-      el.grupo.position.y = el.posicaoYBase;
+      el.grupo.position.copy(el.posicaoBase);
       for (const m of el.meshes) {
         m.material = m.userData.materialOriginal;
       }
     } else if (estadoInfo.estado === "entrando") {
-      // 5. Peça descendo suavemente: usa seu material real com um leve brilho de realce
+      // 5. Peça descendo/deslizando suavemente: usa seu material real com um leve brilho de realce.
+      // A direção vem do projeto (mod.dir ou mod.dirs[guid]) — por padrão continua vindo "de cima".
       el.grupo.visible = true;
-      el.grupo.position.y = el.posicaoYBase + estadoInfo.deslocamento * ALTURA_ENTRADA;
+      const direcao = (estadoInfo.pecaInfo && estadoInfo.pecaInfo.direcao) || "cima";
+      const eixo = EIXOS_ENTRADA[direcao] || EIXOS_ENTRADA.cima;
+      el.grupo.position.set(
+        el.posicaoBase.x + eixo[0] * estadoInfo.deslocamento * ALTURA_ENTRADA,
+        el.posicaoBase.y + eixo[1] * estadoInfo.deslocamento * ALTURA_ENTRADA,
+        el.posicaoBase.z + eixo[2] * estadoInfo.deslocamento * ALTURA_ENTRADA
+      );
       for (const m of el.meshes) {
         if (!m.userData.matEntrando) {
           m.userData.matEntrando = m.userData.materialOriginal.clone();
@@ -357,7 +372,7 @@ export function atualizarInstanteAnimacao(novoTempo) {
         el.grupo.visible = false;
       } else {
         el.grupo.visible = true;
-        el.grupo.position.y = el.posicaoYBase;
+        el.grupo.position.copy(el.posicaoBase);
         for (const m of el.meshes) {
           m.material = materialFantasma;
         }

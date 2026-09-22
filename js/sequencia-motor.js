@@ -109,7 +109,8 @@ export function prepararCronograma(dadosJson, filtroModulo = null) {
         inicio,
         fim,
         duracao: dur,
-        direcao: mod.dir || "cima",
+        // A direção pode ser ajustada peça a peça (mod.dirs[guid]); sem isso, usa a direção geral do módulo
+        direcao: (mod.dirs && mod.dirs[guid]) || mod.dir || "cima",
         indiceNoModulo: idx + 1,
         totalNoModulo: seq.length
       });
