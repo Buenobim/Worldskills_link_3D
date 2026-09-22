@@ -294,6 +294,13 @@ body, html {
   transform: translateY(-1px);
 }
 
+/* Estilo de botão mutado: destaque sutil em tom de aviso para o usuário saber que o som está desligado */
+.btn-auxiliar.mutado {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.12);
+}
+
 .btn-auxiliar svg {
   width: 18px;
   height: 18px;

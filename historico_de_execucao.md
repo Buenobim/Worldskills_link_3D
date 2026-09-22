@@ -115,3 +115,16 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
     - `modulo_full-model.json` (Obra completa com todos os módulos)
 - **Deploy e Nuvem**:
   - Publicado no Firebase Hosting para que os links e QR Codes abram imediatamente a versão revisada.
+
+---
+
+### [2026-09-21] - Trilha Sonora Cinematográfica de Fundo e Controle de Áudio
+- **Inclusão da Trilha Sonora**:
+  - Adicionado o arquivo de áudio `audio/trilha.mp3` ("Inspiring Uplifting Cinematic Background Music For Videos").
+- **Comportamento Sincronizado**:
+  - A música inicia automaticamente em volume agradável (40%) ao clicar em Play para acompanhar a montagem 3D.
+  - A música pausa automaticamente ao pausar o vídeo ou ao término da sequência de peças.
+- **Botão de Mute**:
+  - Adicionado botão de som na barra flutuante para mutar ou desmutar a qualquer momento com apenas 1 toque.
+- **Preservação Total dos Links**:
+  - Todos os links oficiais continuam exatamente os mesmos, sem qualquer alteração de URL.
