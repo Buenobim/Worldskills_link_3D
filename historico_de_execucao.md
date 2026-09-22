@@ -100,5 +100,18 @@ Este arquivo registra cada passo dado no desenvolvimento do projeto, garantindo 
 - **Deploy de Produção**:
   - Publicado com sucesso no Firebase Hosting (`https://visualizador3dwsc.web.app`).
 
+---
 
-
+### [2026-09-21] - Atualização da Revisão dos Módulos e IFC
+- **Atualização do Modelo IFC 3D**:
+  - Atualizado o arquivo IFC oficial `modelos/Projeto_Atual.ifc` a partir da nova revisão `Projeto WorldSkills 04.ifc`.
+- **Atualização do Cronograma e Sequência JSON**:
+  - Atualizado `modelos/Projeto_Atual.json` com a revisão completa fornecida pelo usuário.
+  - Reprocessados todos os arquivos segregados por módulo para os links não-óbvios:
+    - `modulo_mod-8k2p.json` (Módulo A: Base e alvenaria)
+    - `modulo_mod-4t7b.json` (Módulo B: Módulo A pré-montado + Mosaico estrutural)
+    - `modulo_mod-1w9v.json` (Módulo C: Módulos A e B pré-montados + Parede intermediária)
+    - `modulo_mod-6n3r.json` (Módulo D: Módulos A, B e C pré-montados + Montagem final)
+    - `modulo_full-model.json` (Obra completa com todos os módulos)
+- **Deploy e Nuvem**:
+  - Publicado no Firebase Hosting para que os links e QR Codes abram imediatamente a versão revisada.
